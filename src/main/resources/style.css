@@ -1,0 +1,31 @@
+.label {
+    -fx-padding: 10;
+}
+
+.text-field {
+    -fx-font: 16px "Serif";
+    -fx-padding: 5;
+    -fx-background-color: #E9E9E9;
+    -fx-border-color: Black
+}
+
+.button {
+    -fx-font: 16px "Serif";
+    -fx-padding: 10;
+    -fx-label-padding: 5, 5, 5, 5;
+    -fx-background-color: #E9E9E9;
+    -fx-border-color: Black
+}
+
+#button-control-flow-pane {
+    -fx-alignment: "center-right";
+    -fx-padding: 10;
+    -fx-hgap: 10;
+    -fx-vgap: 5;
+}
+
+#header-label {
+    -fx-padding: 5;
+    -fx-font: 24px "Serif";
+    -fx-text-fill: Blue;
+}
