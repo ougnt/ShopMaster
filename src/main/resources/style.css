@@ -6,7 +6,7 @@
     -fx-font: 16px "Serif";
     -fx-padding: 5;
     -fx-background-color: #E9E9E9;
-    -fx-border-color: Black
+    -fx-border-color: Black;
 }
 
 .button {
@@ -24,8 +24,15 @@
     -fx-vgap: 5;
 }
 
+#member-info-pane {
+    -fx-padding: 5;
+}
+
 #header-label {
     -fx-padding: 5;
     -fx-font: 24px "Serif";
+    -fx-fill: linear-gradient(from 0% 0% to 100% 200%, repeat, aqua 0%, red 50%);
+    -fx-stroke: black;
+    -fx-stroke-width: 1;
     -fx-text-fill: Blue;
 }

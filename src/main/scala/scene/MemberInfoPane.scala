@@ -8,8 +8,10 @@ import org.joda.time.DateTime
 import scene.MemberInfoPane.DisplayMode
 import scene.MemberInfoPane.DisplayMode.DisplayMode
 
+import scala.concurrent.{ExecutionContext, Future}
+import scala.math.Ordering.IntOrdering
 import scalafx.scene.control.Alert.AlertType
-import scalafx.scene.control.{Alert, Button, Label, TextField}
+import scalafx.scene.control._
 import scalafx.scene.layout.{BorderPane, FlowPane, GridPane}
 
 /**
@@ -18,51 +20,51 @@ import scalafx.scene.layout.{BorderPane, FlowPane, GridPane}
 class MemberInfoPane(displayMode: DisplayMode)(implicit context: CoreContext) extends BorderPane {
 
     stylesheets = List(getClass.getResource("/style.css").toExternalForm)
+    id = "member-info-pane"
 
     val dataModel = loadDataModel()
     val gridPane = new GridPane
-    val flowPane = new FlowPane
+    val firstNameFlowPane = new FlowPane()
+    val lastNameFlowPane = new FlowPane()
+    val sexFlowPane = new FlowPane()
+    val addressFlowPane = new FlowPane()
+    val birthFlowPane = new FlowPane()
+    val idFlowPane = new FlowPane()
+    val telFlowPane = new FlowPane()
+    val buttonFlowPane = new FlowPane
 
     //<editor-fold desc="Label">
 
-    val headerLabel = new Label(dataModel.headerLabel) {
-        id = "header-label"
-    }
-    top = headerLabel
+    val nameLabel = new Label(dataModel.firstNameLabel)
+    var labelContents = List(nameLabel)
 
-    val nameLabel = new Label(dataModel.firstNameLabel) {
-    }
-    gridPane.add(nameLabel, 1, 1)
-
-    val lastNameLabel = new Label(dataModel.lastNameLabel) {
-    }
-
-    gridPane.add(lastNameLabel, 1, 2)
+    val lastNameLabel = new Label(dataModel.lastNameLabel)
+    labelContents ++= List(lastNameLabel)
 
     val idLabel = new Label(dataModel.idLabel) {
         id = "id-label"
     }
-    gridPane.add(idLabel, 3, 1)
+    labelContents ++= List(idLabel)
 
     val telLabel = new Label(dataModel.telLabel) {
         id = "id-label"
     }
-    gridPane.add(telLabel, 3, 2)
+    labelContents ++= List(telLabel)
 
     val sexLabel = new Label(dataModel.sexLabel) {
         id = "sex-label"
     }
-    gridPane.add(sexLabel, 1, 3)
+    labelContents ++= List(sexLabel)
 
     val birthLabel = new Label(dataModel.birthLabel) {
         id = "birth-label"
     }
-    gridPane.add(birthLabel, 3, 3)
+    labelContents ++= List(birthLabel)
 
     val addressLabel = new Label(dataModel.addressLabel) {
         id = "address-label"
     }
-    gridPane.add(addressLabel, 1, 4)
+    labelContents ++= List(addressLabel)
 
     //</editor-fold>
 
@@ -80,7 +82,6 @@ class MemberInfoPane(displayMode: DisplayMode)(implicit context: CoreContext) ex
             }
         }
     }
-    gridPane.add(firstNameTextField, 2, 1)
     var textFieldContents = List(firstNameTextField)
 
     val lastNameTextField = new TextField() {
@@ -90,7 +91,6 @@ class MemberInfoPane(displayMode: DisplayMode)(implicit context: CoreContext) ex
             dataModel.lastName.update(text.apply())
         }
     }
-    gridPane.add(lastNameTextField, 2, 2)
     textFieldContents ++= List(lastNameTextField)
 
     val idTextField = new TextField() {
@@ -104,7 +104,6 @@ class MemberInfoPane(displayMode: DisplayMode)(implicit context: CoreContext) ex
             dataModel.id.update(text.apply().toLong)
         }
     }
-    gridPane.add(idTextField, 4, 1)
     textFieldContents ++= List(idTextField)
 
     val telTextField = new TextField() {
@@ -114,7 +113,6 @@ class MemberInfoPane(displayMode: DisplayMode)(implicit context: CoreContext) ex
             dataModel.tel.update(text.apply())
         }
     }
-    gridPane.add(telTextField, 4, 2)
     textFieldContents ++= List(telTextField)
 
     val sexTextField = new TextField() {
@@ -126,7 +124,6 @@ class MemberInfoPane(displayMode: DisplayMode)(implicit context: CoreContext) ex
             dataModel.sex.update(text.apply())
         }
     }
-    gridPane.add(sexTextField, 2, 3)
     textFieldContents ++= List(sexTextField)
 
     val birthTextField = new TextField() {
@@ -150,7 +147,6 @@ class MemberInfoPane(displayMode: DisplayMode)(implicit context: CoreContext) ex
             }
         }
     }
-    gridPane.add(birthTextField, 4, 3)
     textFieldContents ++= List(birthTextField)
 
     val addressTextField = new TextField() {
@@ -160,7 +156,6 @@ class MemberInfoPane(displayMode: DisplayMode)(implicit context: CoreContext) ex
             dataModel.address.update(text.apply())
         }
     }
-    gridPane.add(addressTextField, 2, 4)
     textFieldContents ++= List(addressTextField)
 
     //</editor-fold>
@@ -217,13 +212,53 @@ class MemberInfoPane(displayMode: DisplayMode)(implicit context: CoreContext) ex
         }
     })
 
-    flowPane.id = "button-control-flow-pane"
-    flowPane.children = buttonContents
+    buttonFlowPane.id = "button-control-flow-pane"
+    buttonFlowPane.children = buttonContents
 
     //</editor-fold>
 
+    firstNameFlowPane.children = List(nameLabel, firstNameTextField)
+    lastNameFlowPane.children = List(lastNameLabel, lastNameTextField)
+    sexFlowPane.children = List(sexLabel, sexTextField)
+    addressFlowPane.children = List(addressLabel, addressTextField)
+    idFlowPane.children = List(idLabel, idTextField)
+    telFlowPane.children = List(telLabel, telTextField)
+    birthFlowPane.children = List(birthLabel, birthTextField)
+
+    val flowPanes = List(firstNameFlowPane, lastNameFlowPane, sexFlowPane, addressFlowPane, idFlowPane, telFlowPane, birthFlowPane)
+
+//    val futureTask = Future{
+//        Thread.sleep(1000)
+//    }
+
+//    futureTask.onComplete  {
+//
+//    }
+
+    gridPane.add(firstNameFlowPane, 1, 1)
+    gridPane.add(lastNameFlowPane, 1, 2)
+    gridPane.add(sexFlowPane, 1, 3)
+    gridPane.add(addressFlowPane, 1, 4)
+
+    gridPane.add(idFlowPane, 2, 1)
+    gridPane.add(telFlowPane, 2, 2)
+    gridPane.add(birthFlowPane, 2, 3)
     center = gridPane
-    bottom = flowPane
+    bottom = buttonFlowPane
+
+    implicit val executionContext = ExecutionContext.global
+    Future {
+        while(nameLabel.width.apply() == 0d) {
+            Thread.sleep(500)
+        }
+        implicit val order = new IntOrdering {}
+        val longestWidth: Double = labelContents.maxBy(l => l.width.apply()).width.apply()
+
+        flowPanes.foreach(f => {
+            f.hgap = longestWidth + 5 - f.children.get(0).asInstanceOf[javafx.scene.control.Label].getWidth
+        })
+
+    }
 
     def loadDataModel(): IMemberInfoModel = {
         if(displayMode == DisplayMode.Register){
