@@ -18,6 +18,7 @@ class MemberRepository(implicit context: CoreContext) extends InjectAble{
     var address = ""
     var sex = ""
     var birth = DateTime.now()
+    var point = 0l
 
     recStatus = 1
 

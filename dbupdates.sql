@@ -61,3 +61,13 @@ CREATE TABLE IF NOT EXISTS member (
 );
 
 CREATE OR REPLACE VIEW member_vu AS (SELECT * FROM member);
+
+-- -------------------------------------------
+-- version 2.0
+-- -------------------------------------------
+UPDATE db_info SET db_version = 2;
+
+ALTER TABLE member
+ADD COLUMN point BIGINT NOT NULL DEFAULT 0 AFTER birth;
+
+CREATE OR REPLACE VIEW member_vu AS (SELECT * FROM member);
