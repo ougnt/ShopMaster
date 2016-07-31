@@ -10,7 +10,8 @@ import scene.MemberSearchPane
 /**
   * * # Created by wacharint on 7/28/2016 AD.
   **/
-class MemberSearchModel(scene: MemberSearchPane)(implicit context: CoreContext) {
+class MemberSearchModel(scene: MemberSearchPane)(implicit context: CoreContext)
+{
 
     //<editor-fold desc="variable and value">
 
@@ -30,15 +31,19 @@ class MemberSearchModel(scene: MemberSearchPane)(implicit context: CoreContext) 
 
     //<editor-fold desc="methods">
 
-    def onSearchChange(): Unit = {
+    def onSearchChange(): Unit =
+    {
 
-        if(searchKeyword().length == 0) {
+        if (searchKeyword().length == 0)
+        {
             // do nothing
-        } else {
+        } else
+        {
             lastAction = DateTime.now()
             val tempMember = new MemberRepository()
             val searchKey = "%" + searchKeyword() + "%"
-            val sql = """
+            val sql =
+                """
                         SELECT   *
                         FROM     %s
                         WHERE    id like '$#SEARCH_KEY#$'
@@ -46,7 +51,7 @@ class MemberSearchModel(scene: MemberSearchPane)(implicit context: CoreContext) 
                         OR       last_name like '$#SEARCH_KEY#$'
                         OR       tel like '$#SEARCH_KEY#$'
 
-                      """.stripMargin.format(tempMember.tableName+"_vu").replaceAll("""\$\#SEARCH_KEY\#\$""", searchKey)
+                """.stripMargin.format(tempMember.tableName + "_vu").replaceAll("""\$\#SEARCH_KEY\#\$""", searchKey)
 
             members = tempMember.get(sql).asInstanceOf[Seq[MemberRepository]].distinct
             lastAction = DateTime.now()

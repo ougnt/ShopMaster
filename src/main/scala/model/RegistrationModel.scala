@@ -5,9 +5,11 @@ import context.CoreContext
 /**
   * * # Created by wacharint on 7/25/2016 AD.
   **/
-class RegistrationModel(implicit context: CoreContext) extends IMemberInfoModel {
+class RegistrationModel(implicit context: CoreContext) extends IMemberInfoModel
+{
 
-    override def save() = {
+    override def save() =
+    {
         member.firstName = firstName()
         member.lastName = lastName()
         member.id = id()

@@ -8,7 +8,8 @@ import rx.{Rx, Var}
 /**
   * * # Created by wacharint on 7/27/2016 AD.
   **/
-abstract class IMemberInfoModel(implicit context: CoreContext) {
+abstract class IMemberInfoModel(implicit context: CoreContext)
+{
     val member = new MemberRepository
 
     val headerLabel = "Member Registration"
@@ -38,11 +39,16 @@ abstract class IMemberInfoModel(implicit context: CoreContext) {
 
     //<editor-fold desc="Rx">
 
-    val age = Rx{ (DateTime.now.getMillis - birth().getMillis) / 1000 / 60 / 60 / 24 / 365 }
+    val age = Rx
+    {
+        (DateTime.now.getMillis - birth().getMillis) / 1000 / 60 / 60 / 24 / 365
+    }
 
     //</editor-fold>
 
     def save(): Unit = ???
+
     def edit(): Unit = ???
+
     def inactive(): Unit = ???
 }

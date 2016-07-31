@@ -17,7 +17,8 @@ import scalafx.scene.layout.{BorderPane, FlowPane, GridPane}
 /**
   * * # Created by wacharint on 7/25/2016 AD.
   **/
-class MemberInfoPane(displayMode: DisplayMode)(implicit context: CoreContext) extends BorderPane {
+class MemberInfoPane(displayMode: DisplayMode)(implicit context: CoreContext) extends BorderPane
+{
 
     stylesheets = List(getClass.getResource("/style.css").toExternalForm)
     id = "member-info-pane"
@@ -41,27 +42,32 @@ class MemberInfoPane(displayMode: DisplayMode)(implicit context: CoreContext) ex
     val lastNameLabel = new Label(dataModel.lastNameLabel)
     labelContents ++= List(lastNameLabel)
 
-    val idLabel = new Label(dataModel.idLabel) {
+    val idLabel = new Label(dataModel.idLabel)
+    {
         id = "id-label"
     }
     labelContents ++= List(idLabel)
 
-    val telLabel = new Label(dataModel.telLabel) {
+    val telLabel = new Label(dataModel.telLabel)
+    {
         id = "id-label"
     }
     labelContents ++= List(telLabel)
 
-    val sexLabel = new Label(dataModel.sexLabel) {
+    val sexLabel = new Label(dataModel.sexLabel)
+    {
         id = "sex-label"
     }
     labelContents ++= List(sexLabel)
 
-    val birthLabel = new Label(dataModel.birthLabel) {
+    val birthLabel = new Label(dataModel.birthLabel)
+    {
         id = "birth-label"
     }
     labelContents ++= List(birthLabel)
 
-    val addressLabel = new Label(dataModel.addressLabel) {
+    val addressLabel = new Label(dataModel.addressLabel)
+    {
         id = "address-label"
     }
     labelContents ++= List(addressLabel)
@@ -70,35 +76,44 @@ class MemberInfoPane(displayMode: DisplayMode)(implicit context: CoreContext) ex
 
     //<editor-fold desc="text field">
 
-    val firstNameTextField = new TextField() {
+    val firstNameTextField = new TextField()
+    {
         id = "first-name-text-field"
         text = dataModel.firstName()
-        text.onChange {
+        text.onChange
+        {
             dataModel.firstName.update(text.apply())
         }
-        onAction = new EventHandler[ActionEvent] {
-            override def handle(event: ActionEvent): Unit = {
+        onAction = new EventHandler[ActionEvent]
+        {
+            override def handle(event: ActionEvent): Unit =
+            {
                 lastNameTextField.requestFocus()
             }
         }
     }
     var textFieldContents = List(firstNameTextField)
 
-    val lastNameTextField = new TextField() {
+    val lastNameTextField = new TextField()
+    {
         id = "last-name-text-field"
         text = dataModel.lastName()
-        text.onChange  {
+        text.onChange
+        {
             dataModel.lastName.update(text.apply())
         }
     }
     textFieldContents ++= List(lastNameTextField)
 
-    val idTextField = new TextField() {
+    val idTextField = new TextField()
+    {
         id = "id-text-field"
         text = dataModel.id().toString
-        text.onChange {
-            text.apply() foreach( c => if(!c.isDigit){
-                text = text.apply().replaceAll(c.toString,"")
+        text.onChange
+        {
+            text.apply() foreach (c => if (!c.isDigit)
+            {
+                text = text.apply().replaceAll(c.toString, "")
                 alertOnlyNumberAllow
             })
             dataModel.id.update(text.apply().toLong)
@@ -106,38 +121,51 @@ class MemberInfoPane(displayMode: DisplayMode)(implicit context: CoreContext) ex
     }
     textFieldContents ++= List(idTextField)
 
-    val telTextField = new TextField() {
+    val telTextField = new TextField()
+    {
         id = "tel-text-field"
         text = dataModel.tel()
-        text.onChange {
+        text.onChange
+        {
             dataModel.tel.update(text.apply())
         }
     }
     textFieldContents ++= List(telTextField)
 
-    val sexTextField = new TextField() {
+    val sexTextField = new TextField()
+    {
         id = "sex-text-field"
 
         text = dataModel.sex()
-        text.onChange {
-            if(text.apply().length > 1) { text = text.apply().charAt(1).toString }
+        text.onChange
+        {
+            if (text.apply().length > 1)
+            {
+                text = text.apply().charAt(1).toString
+            }
             dataModel.sex.update(text.apply())
         }
     }
     textFieldContents ++= List(sexTextField)
 
-    val birthTextField = new TextField() {
+    val birthTextField = new TextField()
+    {
         id = "birth-text-field"
 
-        focused.onChange {
+        focused.onChange
+        {
 
-            if(!focused.apply()) {
+            if (!focused.apply())
+            {
                 var date = DateTime.now()
-                try {
+                try
+                {
                     val parsedDate = DateTime.parse(text.apply())
                     date = parsedDate
-                } catch {
-                    case e: IllegalArgumentException => {
+                } catch
+                {
+                    case e: IllegalArgumentException =>
+                    {
                         alertIncorrectDateFormat
                         text = ""
                         requestFocus()
@@ -149,10 +177,12 @@ class MemberInfoPane(displayMode: DisplayMode)(implicit context: CoreContext) ex
     }
     textFieldContents ++= List(birthTextField)
 
-    val addressTextField = new TextField() {
+    val addressTextField = new TextField()
+    {
         id = "address-text-field"
         text = dataModel.address()
-        text.onChange {
+        text.onChange
+        {
             dataModel.address.update(text.apply())
         }
     }
@@ -162,11 +192,14 @@ class MemberInfoPane(displayMode: DisplayMode)(implicit context: CoreContext) ex
 
     //<editor-fold desc="button control>
 
-    val saveButton = new Button() {
+    val saveButton = new Button()
+    {
         id = "save-button"
         text = dataModel.saveButtonText
-        onAction = new EventHandler[ActionEvent] {
-            override def handle(event: ActionEvent): Unit = {
+        onAction = new EventHandler[ActionEvent]
+        {
+            override def handle(event: ActionEvent): Unit =
+            {
                 saveDataModel()
             }
         }
@@ -174,21 +207,26 @@ class MemberInfoPane(displayMode: DisplayMode)(implicit context: CoreContext) ex
     var buttonContents = List(saveButton)
     saveButton.visible = dataModel.saveButtonVisible
 
-    val editButton = new Button() {
+    val editButton = new Button()
+    {
         id = "edit-button"
         text = dataModel.editButtonText
-        onAction = new EventHandler[ActionEvent] {
+        onAction = new EventHandler[ActionEvent]
+        {
             override def handle(event: ActionEvent): Unit = ???
         }
     }
     buttonContents ++= List(editButton)
     editButton.visible = dataModel.editButtonVisible
 
-    val clearButton = new Button() {
+    val clearButton = new Button()
+    {
         id = "clear-button"
         text = dataModel.clearButtonText
-        onAction = new EventHandler[ActionEvent] {
-            override def handle(event: ActionEvent): Unit = {
+        onAction = new EventHandler[ActionEvent]
+        {
+            override def handle(event: ActionEvent): Unit =
+            {
                 clearData()
             }
         }
@@ -196,18 +234,22 @@ class MemberInfoPane(displayMode: DisplayMode)(implicit context: CoreContext) ex
     buttonContents ++= List(clearButton)
     clearButton.visible = dataModel.clearButtonVisible
 
-    val inActiveButton = new Button() {
+    val inActiveButton = new Button()
+    {
         id = "inactive-button"
         text = dataModel.inActiveButtonText
-        onAction = new EventHandler[ActionEvent] {
+        onAction = new EventHandler[ActionEvent]
+        {
             override def handle(event: ActionEvent): Unit = ???
         }
     }
     buttonContents ++= List(inActiveButton)
     inActiveButton.visible = dataModel.inActiveButtonVisible
 
-    buttonContents.foreach( b => {
-        if(!b.visible.apply()) {
+    buttonContents.foreach(b =>
+    {
+        if (!b.visible.apply())
+        {
             buttonContents = buttonContents.diff(List(b))
         }
     })
@@ -227,13 +269,13 @@ class MemberInfoPane(displayMode: DisplayMode)(implicit context: CoreContext) ex
 
     val flowPanes = List(firstNameFlowPane, lastNameFlowPane, sexFlowPane, addressFlowPane, idFlowPane, telFlowPane, birthFlowPane)
 
-//    val futureTask = Future{
-//        Thread.sleep(1000)
-//    }
+    //    val futureTask = Future{
+    //        Thread.sleep(1000)
+    //    }
 
-//    futureTask.onComplete  {
-//
-//    }
+    //    futureTask.onComplete  {
+    //
+    //    }
 
     gridPane.add(firstNameFlowPane, 1, 1)
     gridPane.add(lastNameFlowPane, 1, 2)
@@ -247,50 +289,65 @@ class MemberInfoPane(displayMode: DisplayMode)(implicit context: CoreContext) ex
     bottom = buttonFlowPane
 
     implicit val executionContext = ExecutionContext.global
-    Future {
-        while(nameLabel.width.apply() == 0d) {
+    Future
+    {
+        while (nameLabel.width.apply() == 0d)
+        {
             Thread.sleep(500)
         }
-        implicit val order = new IntOrdering {}
+        implicit val order = new IntOrdering
+        {}
         val longestWidth: Double = labelContents.maxBy(l => l.width.apply()).width.apply()
 
-        flowPanes.foreach(f => {
+        flowPanes.foreach(f =>
+        {
             f.hgap = longestWidth + 5 - f.children.get(0).asInstanceOf[javafx.scene.control.Label].getWidth
         })
 
     }
 
-    def loadDataModel(): IMemberInfoModel = {
-        if(displayMode == DisplayMode.Register){
+    def loadDataModel(): IMemberInfoModel =
+    {
+        if (displayMode == DisplayMode.Register)
+        {
             new RegistrationModel
-        } else {
+        } else
+        {
             null
         }
     }
 
-    def clearData() = {
+    def clearData() =
+    {
         textFieldContents.foreach(c => c.asInstanceOf[TextField].text = "")
     }
 
-    def saveDataModel(): Unit = {
+    def saveDataModel(): Unit =
+    {
 
         dataModel.save
     }
 
-    def alertOnlyNumberAllow = new Alert(AlertType.Warning,"Only number allowed") {
+    def alertOnlyNumberAllow = new Alert(AlertType.Warning, "Only number allowed")
+    {
         title = "Alert"
         headerText = "Validation Error"
     }.showAndWait()
 
-    def alertIncorrectDateFormat = new Alert(AlertType.Warning, """Please enter date in format "yyyy-mm-dd".""") {
+    def alertIncorrectDateFormat = new Alert(AlertType.Warning, """Please enter date in format "yyyy-mm-dd".""")
+    {
         title = "Alert"
         headerText = "Incorrect Date Format"
     }.showAndWait()
 }
 
-object MemberInfoPane {
-    object DisplayMode extends Enumeration {
+object MemberInfoPane
+{
+
+    object DisplayMode extends Enumeration
+    {
         type DisplayMode = Value
         val Register, View, Edit = Value
     }
+
 }

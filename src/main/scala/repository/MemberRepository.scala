@@ -8,7 +8,8 @@ import org.joda.time.DateTime
 /**
   * * # Created by wacharint on 7/27/2016 AD.
   **/
-class MemberRepository(implicit context: CoreContext) extends InjectAble{
+class MemberRepository(implicit context: CoreContext) extends InjectAble
+{
 
     var memberId = 0
     var firstName = ""

@@ -12,7 +12,8 @@ import org.joda.time.DateTime
   * * # Created by wacharint on 7/6/15.
   **/
 
-trait InjectAble {
+trait InjectAble
+{
 
     val callContext: CoreContext
     var fields: Seq[Field]
@@ -25,9 +26,11 @@ trait InjectAble {
     var recModifiedBy: UUID = null
     var recStatus: Int = 0
 
-    def insert(): Int = {
+    def insert(): Int =
+    {
 
-        if (callContext.connection.isEmpty) {
+        if (callContext.connection.isEmpty)
+        {
 
             callContext.connect()
         }
@@ -49,11 +52,13 @@ trait InjectAble {
             filterNot(field => field.getName == "recModifiedWhen").
             filterNot(field => field.getName == "recModifiedBy")
 
-        fields.foreach(field => {
+        fields.foreach(field =>
+        {
 
             field.setAccessible(true)
             val value = field.get(this)
-            if (value != null) {
+            if (value != null)
+            {
 
                 sqlStatement = sqlStatement.replace( """#columns#""", field.getName.replaceAll( """([A-Z])""", """_$1""").toLowerCase.concat( """,#columns#"""))
                 sqlStatement = sqlStatement.replace( """#values#""", """N'%s',#values#""".format(value.toString))
@@ -68,7 +73,8 @@ trait InjectAble {
         sqlStatement = sqlStatement.replace(""",#columns#""", "")
         sqlStatement = sqlStatement.replace(""",#values#""", "")
 
-        try {
+        try
+        {
             val conn = callContext.connection.get
             //      val statement = conn.createStatement()
             val statement = conn.prepareStatement(sqlStatement, Statement.RETURN_GENERATED_KEYS)
@@ -78,51 +84,62 @@ trait InjectAble {
             resset.next
             if (resset.getRow == 0)
                 0
-            else {
+            else
+            {
                 resset.getInt(1)
             }
-        } catch {
-            case ex: SQLException => {
+        } catch
+        {
+            case ex: SQLException =>
+            {
                 Console.println(ex.getMessage)
                 throw ex
             }
-            case ex: Exception => {
+            case ex: Exception =>
+            {
                 Console.println(ex.getMessage)
                 throw ex
             }
         }
     }
 
-    def get(customSql: String): Seq[InjectAble] = {
+    def get(customSql: String): Seq[InjectAble] =
+    {
 
-        if (callContext.connection.isEmpty) {
+        if (callContext.connection.isEmpty)
+        {
 
             callContext.connect()
         }
 
         var res: ResultSet = null
 
-        try {
-            if (callContext.connection.isEmpty) {
+        try
+        {
+            if (callContext.connection.isEmpty)
+            {
 
                 callContext.connect()
             }
             val conn = callContext.connection.get
             val statement = conn.createStatement()
             res = statement.executeQuery(customSql)
-        } catch {
+        } catch
+        {
             case e: SQLException => throw e
             case e: Exception => throw e
         }
         fromResultSet(res)
     }
 
-    def fromResultSet(res: ResultSet): Seq[InjectAble] = {
+    def fromResultSet(res: ResultSet): Seq[InjectAble] =
+    {
 
         var hasData = false
         var returnedSeq: Seq[InjectAble] = Nil
 
-        while (res.next) {
+        while (res.next)
+        {
 
             fields = fields.filterNot(field => field.getName == "connection").
                 filterNot(field => field.getName == "databaseUrl").
@@ -133,16 +150,19 @@ trait InjectAble {
 
             val result: InjectAble = this.getClass.getConstructor(classOf[CoreContext]).newInstance(callContext)
 
-            fields.foreach(field => {
+            fields.foreach(field =>
+            {
 
                 field.setAccessible(true)
                 val columnName = field.getName.replaceAll("""([A-Z])""", """_$1""").toLowerCase
                 val value = res.getObject(columnName)
-                if (value != null) {
+                if (value != null)
+                {
 
                     hasData = true
 
-                    field.getType.getSimpleName match {
+                    field.getType.getSimpleName match
+                    {
                         case "UUID" =>
 
                             val typeValue = UUID.fromString(value.asInstanceOf[String])
@@ -158,7 +178,8 @@ trait InjectAble {
 
                             field.set(result, value)
                     }
-                } else {
+                } else
+                {
 
                     field.set(result, null)
                 }
@@ -169,9 +190,11 @@ trait InjectAble {
         if (hasData) returnedSeq else Nil
     }
 
-    def get(keyValues: Seq[(String, String)]): Seq[InjectAble] = {
+    def get(keyValues: Seq[(String, String)]): Seq[InjectAble] =
+    {
 
-        if (callContext.connection.isEmpty) {
+        if (callContext.connection.isEmpty)
+        {
 
             callContext.connect()
         }
@@ -190,15 +213,18 @@ trait InjectAble {
 
         var res: ResultSet = null
 
-        try {
-            if (callContext.connection.isEmpty) {
+        try
+        {
+            if (callContext.connection.isEmpty)
+            {
 
                 callContext.connect()
             }
             val conn = callContext.connection.get
             val statement = conn.createStatement()
             res = statement.executeQuery(sqlStatement)
-        } catch {
+        } catch
+        {
             case e: SQLException => throw e
             case e: Exception => throw e
         }
@@ -206,18 +232,23 @@ trait InjectAble {
         fromResultSet(res)
     }
 
-    def insertOrUpdate(keyValues: Seq[(String, String)]) = {
+    def insertOrUpdate(keyValues: Seq[(String, String)]) =
+    {
 
-        if (callContext.connection.isEmpty) {
+        if (callContext.connection.isEmpty)
+        {
 
             callContext.connect()
         }
 
-        try {
+        try
+        {
             insert()
-        } catch {
+        } catch
+        {
 
-            case e: SQLException => {
+            case e: SQLException =>
+            {
                 var sqlStatement =
                     """UPDATE %s
                       |SET #columns# = '#values#',""".stripMargin.format(tableName)
@@ -233,11 +264,13 @@ trait InjectAble {
                     filterNot(field => field.getName == "recModifiedWhen").
                     filterNot(field => field.getName == "recModifiedBy")
 
-                fields.foreach(field => {
+                fields.foreach(field =>
+                {
 
                     field.setAccessible(true)
                     val value = field.get(this)
-                    if (value != null) {
+                    if (value != null)
+                    {
 
                         sqlStatement = sqlStatement.replace( """#columns#""", field.getName.replaceAll( """([A-Z])""", """_$1"""))
                         sqlStatement = sqlStatement.replace( """#values#""", value.toString).concat("""#columns# = N'#values#',""")
@@ -256,15 +289,19 @@ trait InjectAble {
                 sqlStatement = sqlStatement.replace(""" WHERE #columns# = N'#values#'""", "")
                 sqlStatement = sqlStatement.replace("""AND #columns# = N'#values#'""", "")
 
-                try {
+                try
+                {
                     val conn = callContext.connection.get
                     val statement = conn.createStatement()
                     val res = statement.executeUpdate(sqlStatement)
-                } catch {
-                    case ex: SQLException => {
+                } catch
+                {
+                    case ex: SQLException =>
+                    {
                         throw ex
                     }
-                    case ex: Exception => {
+                    case ex: Exception =>
+                    {
                         throw ex
                     }
                 }
