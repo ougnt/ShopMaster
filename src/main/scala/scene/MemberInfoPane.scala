@@ -314,7 +314,7 @@ class MemberInfoPane(displayMode: DisplayMode, memberId: Int = 0)(implicit conte
     implicit val executionContext = ExecutionContext.global
     Future
     {
-        while (nameLabel.width.apply() == 0d)
+        while (!labelContents.diff(Seq(pointLabel)).forall(_.width.apply() > 0))
         {
             Thread.sleep(10)
         }
