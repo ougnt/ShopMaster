@@ -61,12 +61,12 @@ class MemberSearchPane(implicit context: CoreContext, terminator: () => Unit) ex
         {
             override def handle(event: MouseEvent): Unit =
             {
-                if (event.getClickCount >= 2)
+                if (event.getClickCount == 2)
                 {
                     val selectedMember = table.selectionModel.apply().selectedItemProperty().get
-                }
 
-                Console.print("")
+                    Console.print(selectedMember.firstName + " " + selectedMember.lastName)
+                }
             }
         }
 

@@ -32,7 +32,8 @@ class MemberInfoPane(displayMode: DisplayMode)(implicit context: CoreContext) ex
     val birthFlowPane = new FlowPane()
     val idFlowPane = new FlowPane()
     val telFlowPane = new FlowPane()
-    val buttonFlowPane = new FlowPane
+    val pointFlowPane = new FlowPane()
+    val buttonFlowPane = new FlowPane()
 
     //<editor-fold desc="Label">
 
@@ -71,6 +72,12 @@ class MemberInfoPane(displayMode: DisplayMode)(implicit context: CoreContext) ex
         id = "address-label"
     }
     labelContents ++= List(addressLabel)
+
+    val pointLabel = new Label(dataModel.pointLabel)
+    {
+        id = "point-label"
+    }
+    labelContents ++= List(pointLabel)
 
     //</editor-fold>
 
@@ -188,9 +195,17 @@ class MemberInfoPane(displayMode: DisplayMode)(implicit context: CoreContext) ex
     }
     textFieldContents ++= List(addressTextField)
 
+    val pointTextField = new TextField()
+    {
+        id = "point-text-fleld"
+        text = dataModel.point().toString
+        editable = false
+    }
+    textFieldContents ++= List(pointTextField)
+
     //</editor-fold>
 
-    //<editor-fold desc="button control>
+    //<editor-fold desc="button control">
 
     val saveButton = new Button()
     {
@@ -259,6 +274,8 @@ class MemberInfoPane(displayMode: DisplayMode)(implicit context: CoreContext) ex
 
     //</editor-fold>
 
+    //<editor-fold desc="pane construction">
+
     firstNameFlowPane.children = List(nameLabel, firstNameTextField)
     lastNameFlowPane.children = List(lastNameLabel, lastNameTextField)
     sexFlowPane.children = List(sexLabel, sexTextField)
@@ -266,16 +283,16 @@ class MemberInfoPane(displayMode: DisplayMode)(implicit context: CoreContext) ex
     idFlowPane.children = List(idLabel, idTextField)
     telFlowPane.children = List(telLabel, telTextField)
     birthFlowPane.children = List(birthLabel, birthTextField)
+    pointFlowPane.children = List(pointLabel, pointTextField)
 
-    val flowPanes = List(firstNameFlowPane, lastNameFlowPane, sexFlowPane, addressFlowPane, idFlowPane, telFlowPane, birthFlowPane)
-
-    //    val futureTask = Future{
-    //        Thread.sleep(1000)
-    //    }
-
-    //    futureTask.onComplete  {
-    //
-    //    }
+    val flowPanes = List(firstNameFlowPane,
+        lastNameFlowPane,
+        sexFlowPane,
+        addressFlowPane,
+        idFlowPane,
+        telFlowPane,
+        birthFlowPane,
+        pointFlowPane)
 
     gridPane.add(firstNameFlowPane, 1, 1)
     gridPane.add(lastNameFlowPane, 1, 2)
@@ -285,6 +302,12 @@ class MemberInfoPane(displayMode: DisplayMode)(implicit context: CoreContext) ex
     gridPane.add(idFlowPane, 2, 1)
     gridPane.add(telFlowPane, 2, 2)
     gridPane.add(birthFlowPane, 2, 3)
+
+    if (displayMode == DisplayMode.Edit)
+    {
+        gridPane.add(pointFlowPane, 2, 4)
+    }
+
     center = gridPane
     bottom = buttonFlowPane
 
@@ -305,6 +328,10 @@ class MemberInfoPane(displayMode: DisplayMode)(implicit context: CoreContext) ex
         })
 
     }
+
+    //</editor-fold>
+
+    //<editor-fold desc="def">
 
     def loadDataModel(): IMemberInfoModel =
     {
@@ -339,6 +366,8 @@ class MemberInfoPane(displayMode: DisplayMode)(implicit context: CoreContext) ex
         title = "Alert"
         headerText = "Incorrect Date Format"
     }.showAndWait()
+
+    //</editor-fold>
 }
 
 object MemberInfoPane

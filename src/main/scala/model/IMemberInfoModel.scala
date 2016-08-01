@@ -24,6 +24,7 @@ abstract class IMemberInfoModel(implicit context: CoreContext)
     val clearButtonText = "Clear"
     val editButtonText = "Edit"
     val inActiveButtonText = "Inactive"
+    val pointLabel = "Points"
     val saveButtonVisible: Boolean
     val clearButtonVisible: Boolean
     val editButtonVisible: Boolean
@@ -36,6 +37,7 @@ abstract class IMemberInfoModel(implicit context: CoreContext)
     var address = Var("")
     var sex = Var("")
     var birth = Var(DateTime.now)
+    var point = Var(0l)
 
     //<editor-fold desc="Rx">
 
