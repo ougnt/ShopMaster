@@ -5,6 +5,7 @@ import javafx.event.{ActionEvent, EventHandler}
 import context.CoreContext
 import model.{MemberDetailModel, IMemberInfoModel, RegistrationModel}
 import org.joda.time.DateTime
+import org.joda.time.chrono.BuddhistChronology
 import scene.MemberInfoPane.DisplayMode
 import scene.MemberInfoPane.DisplayMode.DisplayMode
 
@@ -158,7 +159,7 @@ class MemberInfoPane(displayMode: DisplayMode, memberId: Int = 0)(implicit conte
     val birthTextField = new TextField()
     {
         id = "birth-text-field"
-        text = dataModel.birth().toString("yyyy-MM-dd")
+        text = dataModel.birth().withChronology(BuddhistChronology.getInstance()).toString("ddMMyyyy")
         focused.onChange
         {
 
