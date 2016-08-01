@@ -28,6 +28,10 @@
     -fx-padding: 5;
 }
 
+#member-search-tab {
+    -fx-padding: 5;
+}
+
 #header-label {
     -fx-padding: 5;
     -fx-font: 24px "Serif";

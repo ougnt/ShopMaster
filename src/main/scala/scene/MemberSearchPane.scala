@@ -17,9 +17,10 @@ import scalafx.scene.layout.{BorderPane, FlowPane}
   **/
 class MemberSearchPane(openMemberDetailCallback: (MemberRepository) => Unit)(implicit context: CoreContext, terminator: () => Unit) extends BorderPane
 {
-    //    stylesheets = List(getClass.getResource("/style.css").toExternalForm)
+    stylesheets = List(getClass.getResource("/style.css").toExternalForm)
 
     var model = new MemberSearchModel(this)
+    id = "member-search-tab"
 
     center = generateMainPane
 

@@ -16,13 +16,13 @@ class MainScene(implicit context: CoreContext, terminator: () => Unit) extends S
 {
 
     val model = new MainModel
+    stylesheets = List(getClass.getResource("/style.css").toExternalForm)
 
     val memberSearchScene = new MemberSearchPane(openMemberDetailTabCallback)
     val memberSearchTab = new Tab
     {
         text = model.memberSearchTabText
         content = memberSearchScene
-
     }
     memberSearchTab.closable = false
 
