@@ -9,7 +9,7 @@ import repository.MemberRepository
 
 import scalafx.beans.property.{ObjectProperty, StringProperty}
 import scalafx.collections.ObservableBuffer
-import scalafx.scene.control.{Label, TableColumn, TableView, TextField}
+import scalafx.scene.control._
 import scalafx.scene.layout.{BorderPane, FlowPane}
 
 /**
@@ -90,9 +90,17 @@ class MemberSearchPane(openMemberDetailCallback: (MemberRepository) => Unit)(imp
             }
         }
 
+        val searchButton = new Button(model.searchButton) {
+            onAction = new EventHandler[ActionEvent] {
+                override def handle(event: ActionEvent): Unit = {
+                    model.searchKeyword.update(searchTextField.text.apply())
+                }
+            }
+        }
+
         val pane = new FlowPane
         {
-            children = List(searchLabel, searchTextField)
+            children = List(searchLabel, searchTextField, searchButton)
         }
         pane
     }

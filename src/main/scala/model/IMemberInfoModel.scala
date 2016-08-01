@@ -10,8 +10,6 @@ import rx.{Rx, Var}
   **/
 abstract class IMemberInfoModel(implicit context: CoreContext)
 {
-    // TODO : search by birth
-
     var member = new MemberRepository
 
     val headerLabel = "Member Registration"

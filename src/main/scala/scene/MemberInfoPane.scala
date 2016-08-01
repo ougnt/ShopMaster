@@ -3,9 +3,10 @@ package scene
 import javafx.event.{ActionEvent, EventHandler}
 
 import context.CoreContext
-import model.{MemberDetailModel, IMemberInfoModel, RegistrationModel}
+import model.{IMemberInfoModel, MemberDetailModel, RegistrationModel}
 import org.joda.time.DateTime
 import org.joda.time.chrono.BuddhistChronology
+import org.joda.time.format.DateTimeFormat
 import scene.MemberInfoPane.DisplayMode
 import scene.MemberInfoPane.DisplayMode.DisplayMode
 
@@ -168,7 +169,7 @@ class MemberInfoPane(displayMode: DisplayMode, memberId: Int = 0)(implicit conte
                 var date = DateTime.now()
                 try
                 {
-                    val parsedDate = DateTime.parse(text.apply())
+                    val parsedDate = DateTimeFormat.forPattern("ddMMyyyy").parseDateTime(text.apply()).minusYears(543)
                     date = parsedDate
                 } catch
                 {
