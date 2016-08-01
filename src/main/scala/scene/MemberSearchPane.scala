@@ -15,7 +15,7 @@ import scalafx.scene.layout.{BorderPane, FlowPane}
 /**
   * * # Created by wacharint on 7/27/2016 AD.
   **/
-class MemberSearchPane(implicit context: CoreContext, terminator: () => Unit) extends BorderPane
+class MemberSearchPane(openMemberDetailCallback: (MemberRepository) => Unit)(implicit context: CoreContext, terminator: () => Unit) extends BorderPane
 {
     //    stylesheets = List(getClass.getResource("/style.css").toExternalForm)
 
@@ -65,7 +65,7 @@ class MemberSearchPane(implicit context: CoreContext, terminator: () => Unit) ex
                 {
                     val selectedMember = table.selectionModel.apply().selectedItemProperty().get
 
-                    Console.print(selectedMember.firstName + " " + selectedMember.lastName)
+                    openMemberDetailCallback(selectedMember)
                 }
             }
         }

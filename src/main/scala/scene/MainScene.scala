@@ -2,6 +2,7 @@ package scene
 
 import context.CoreContext
 import model.MainModel
+import repository.MemberRepository
 import scene.MemberInfoPane.DisplayMode
 
 import scalafx.scene.Scene
@@ -16,7 +17,7 @@ class MainScene(implicit context: CoreContext, terminator: () => Unit) extends S
 
     val model = new MainModel
 
-    val memberSearchScene = new MemberSearchPane()
+    val memberSearchScene = new MemberSearchPane(openMemberDetailTabCallback)
     val memberSearchTab = new Tab
     {
         text = model.memberSearchTabText
@@ -46,4 +47,17 @@ class MainScene(implicit context: CoreContext, terminator: () => Unit) extends S
     }
 
     root = mainPane
+
+    def openMemberDetailTabCallback(member: MemberRepository): Unit =
+    {
+        val newMemberDetailTab = new Tab
+        {
+            text = member.firstName + " " + member.lastName
+
+            closable = true
+            content = new MemberInfoPane(DisplayMode.Edit, member.memberId)
+        }
+        tabPane.tabs.add(newMemberDetailTab)
+        tabPane.selectionModel.value.select(newMemberDetailTab)
+    }
 }

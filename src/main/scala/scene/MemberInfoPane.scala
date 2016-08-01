@@ -3,7 +3,7 @@ package scene
 import javafx.event.{ActionEvent, EventHandler}
 
 import context.CoreContext
-import model.{IMemberInfoModel, RegistrationModel}
+import model.{MemberDetailModel, IMemberInfoModel, RegistrationModel}
 import org.joda.time.DateTime
 import scene.MemberInfoPane.DisplayMode
 import scene.MemberInfoPane.DisplayMode.DisplayMode
@@ -17,7 +17,7 @@ import scalafx.scene.layout.{BorderPane, FlowPane, GridPane}
 /**
   * * # Created by wacharint on 7/25/2016 AD.
   **/
-class MemberInfoPane(displayMode: DisplayMode)(implicit context: CoreContext) extends BorderPane
+class MemberInfoPane(displayMode: DisplayMode, memberId: Int = 0)(implicit context: CoreContext) extends BorderPane
 {
 
     stylesheets = List(getClass.getResource("/style.css").toExternalForm)
@@ -158,7 +158,7 @@ class MemberInfoPane(displayMode: DisplayMode)(implicit context: CoreContext) ex
     val birthTextField = new TextField()
     {
         id = "birth-text-field"
-
+        text = dataModel.birth().toString("yyyy-MM-dd")
         focused.onChange
         {
 
@@ -316,7 +316,7 @@ class MemberInfoPane(displayMode: DisplayMode)(implicit context: CoreContext) ex
     {
         while (nameLabel.width.apply() == 0d)
         {
-            Thread.sleep(500)
+            Thread.sleep(10)
         }
         implicit val order = new IntOrdering
         {}
@@ -338,6 +338,9 @@ class MemberInfoPane(displayMode: DisplayMode)(implicit context: CoreContext) ex
         if (displayMode == DisplayMode.Register)
         {
             new RegistrationModel
+        } else if (displayMode == DisplayMode.Edit)
+        {
+            new MemberDetailModel(memberId)
         } else
         {
             null

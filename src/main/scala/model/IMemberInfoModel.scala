@@ -10,7 +10,7 @@ import rx.{Rx, Var}
   **/
 abstract class IMemberInfoModel(implicit context: CoreContext)
 {
-    val member = new MemberRepository
+    var member = new MemberRepository
 
     val headerLabel = "Member Registration"
     val firstNameLabel = "First Name"
@@ -30,14 +30,14 @@ abstract class IMemberInfoModel(implicit context: CoreContext)
     val editButtonVisible: Boolean
     val inActiveButtonVisible: Boolean
 
-    var firstName = Var("")
-    var lastName = Var("")
-    var id = Var(0l)
-    var tel = Var("")
-    var address = Var("")
-    var sex = Var("")
-    var birth = Var(DateTime.now)
-    var point = Var(0l)
+    var firstName = Var(member.firstName)
+    var lastName = Var(member.lastName)
+    var id = Var(member.id)
+    var tel = Var(member.tel)
+    var address = Var(member.address)
+    var sex = Var(member.sex)
+    var birth = Var(member.birth)
+    var point = Var(member.point)
 
     //<editor-fold desc="Rx">
 
