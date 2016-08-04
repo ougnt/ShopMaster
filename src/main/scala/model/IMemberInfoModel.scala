@@ -3,7 +3,7 @@ package model
 import context.CoreContext
 import org.joda.time.DateTime
 import repository.MemberRepository
-import rx.{Rx, Var}
+import rx.{Obs, Rx, Var}
 
 /**
   * * # Created by wacharint on 7/27/2016 AD.
@@ -23,7 +23,8 @@ abstract class IMemberInfoModel(implicit context: CoreContext)
     val saveButtonText = "Save"
     val clearButtonText = "Clear"
     val editButtonText = "Edit"
-    val inActiveButtonText = "Inactive"
+    val inActiveButtonText = "Inactive this member"
+    val activeButtonText = "Active this member"
     val pointLabel = "Points"
     val saveButtonVisible: Boolean
     val clearButtonVisible: Boolean
@@ -38,6 +39,7 @@ abstract class IMemberInfoModel(implicit context: CoreContext)
     var sex = Var(member.sex)
     var birth = Var(member.birth)
     var point = Var(member.point)
+    var isActive = Var(member.recStatus.equals(1))
 
     //<editor-fold desc="Rx">
 
@@ -48,9 +50,25 @@ abstract class IMemberInfoModel(implicit context: CoreContext)
 
     //</editor-fold>
 
+    //<editor-fold desc="callback">
+
+    new Obs(isActive, onInactiveStatusChange)
+
+    //</editor-fold>
+
     def save(): Unit = ???
 
     def edit(): Unit = ???
 
-    def inactive(): Unit = ???
+    def toggleActiveStatus(): Unit =
+    {
+        isActive.update(!isActive())
+        member.recStatus = if(isActive()) 1 else 0
+        member.insertOrUpdate(Seq("member_id" -> member.memberId.toString))
+    }
+
+    def onInactiveStatusChange(): Unit =
+    {
+//        member.recStatus = if(isActive()) 1 else 0
+    }
 }

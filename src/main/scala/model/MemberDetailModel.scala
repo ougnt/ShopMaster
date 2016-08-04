@@ -17,6 +17,7 @@ class MemberDetailModel(memberId: Int)(implicit context: CoreContext) extends IM
     birth.update(member.birth)
     sex.update(member.sex)
     point.update(member.point)
+    isActive.update(member.recStatus.equals(1))
 
     override val saveButtonVisible: Boolean = false
     override val editButtonVisible: Boolean = true

@@ -254,10 +254,14 @@ class MemberInfoPane(displayMode: DisplayMode, memberId: Int = 0)(implicit conte
     val inActiveButton = new Button()
     {
         id = "inactive-button"
-        text = dataModel.inActiveButtonText
+        text = getProperInactiveButtonText()
         onAction = new EventHandler[ActionEvent]
         {
-            override def handle(event: ActionEvent): Unit = ???
+            override def handle(event: ActionEvent): Unit =
+            {
+                dataModel.toggleActiveStatus()
+                text = getProperInactiveButtonText()
+            }
         }
     }
     buttonContents ++= List(inActiveButton)
@@ -356,8 +360,17 @@ class MemberInfoPane(displayMode: DisplayMode, memberId: Int = 0)(implicit conte
 
     def saveDataModel(): Unit =
     {
-
         dataModel.save
+    }
+
+    def editDataModel(): Unit =
+    {
+        dataModel.edit()
+    }
+
+    def toggleActiveDataModel(): Unit =
+    {
+        dataModel.toggleActiveStatus()
     }
 
     def alertOnlyNumberAllow = new Alert(AlertType.Warning, "Only number allowed")
@@ -371,6 +384,17 @@ class MemberInfoPane(displayMode: DisplayMode, memberId: Int = 0)(implicit conte
         title = "Alert"
         headerText = "Incorrect Date Format"
     }.showAndWait()
+
+    def getProperInactiveButtonText(): String =
+    {
+        if (dataModel.isActive())
+        {
+            dataModel.inActiveButtonText
+        } else
+        {
+            dataModel.activeButtonText
+        }
+    }
 
     //</editor-fold>
 }
