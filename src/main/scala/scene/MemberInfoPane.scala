@@ -224,6 +224,28 @@ class MemberInfoPane(displayMode: DisplayMode, memberId: Int = 0, overrideDataMo
     var buttonContents = List(saveButton)
     saveButton.visible = dataModel.saveButtonVisible
 
+    val addPointButton = new Button()
+    {
+        id = "add-point-button"
+        text = dataModel.addPointButtonText
+        onAction = new EventHandler[ActionEvent] {
+            override def handle(event: ActionEvent): Unit = ???
+        }
+    }
+    buttonContents ::= addPointButton
+    addPointButton.visible = dataModel.addPointButtonVisible
+
+    val usePointButton = new Button()
+    {
+        id = "use-point-button"
+        text = dataModel.usePointButtonText
+        onAction = new EventHandler[ActionEvent] {
+            override def handle(event: ActionEvent): Unit = ???
+        }
+    }
+    buttonContents ::= usePointButton
+    usePointButton.visible = dataModel.usePointButtonVisible
+
     val editButton = new Button()
     {
         id = "edit-button"
