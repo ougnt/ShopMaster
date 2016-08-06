@@ -3,6 +3,7 @@ package scene
 import javafx.event.{ActionEvent, EventHandler}
 
 import context.CoreContext
+import exception.MemberIsInactiveException
 import model.{IMemberInfoModel, MemberDetailModel, RegistrationModel}
 import org.joda.time.DateTime
 import org.joda.time.chrono.BuddhistChronology
@@ -239,8 +240,15 @@ class MemberInfoPane(displayMode: DisplayMode, memberId: Int = 0, overrideDataMo
                         title = "Add points"
                         contentText = "Please enter points to be added to the member here: "
                     }.showAndWait().getOrElse("0").toInt)
+                    pointTextField.text = dataModel.point().toString
                 } catch
                 {
+                    case e: MemberIsInactiveException => new Alert(AlertType.Error)
+                    {
+                        title = "Invalid member"
+                        contentText = "The member is currently inactived.\nPlease reactive this member to add points"
+                    }.showAndWait()
+
                     case e: Exception => new Alert(AlertType.Error)
                     {
                         title = "Invalid input"
