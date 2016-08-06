@@ -71,3 +71,37 @@ ALTER TABLE member
 ADD COLUMN point BIGINT NOT NULL DEFAULT 0 AFTER birth;
 
 CREATE OR REPLACE VIEW member_vu AS (SELECT * FROM member);
+
+-- -------------------------------------------
+-- version 3.0
+-- -------------------------------------------
+UPDATE db_info SET db_version = 3;
+
+CREATE TABLE IF NOT EXISTS point_activity_type_ref (
+	type_id INT NOT NULL PRIMARY KEY AUTO_INCREMENT,
+	activity_type VARCHAR(1) NOT NULL UNIQUE,
+	description VARCHAR(32) NOT NULL
+);
+
+INSERT INTO point_activity_type_ref  (activity_type, description) VALUES ('A', 'Add point'), ('U', 'Use point');
+
+CREATE TABLE IF NOT EXISTS point_history (
+	history_id INT NOT NULL PRIMARY KEY AUTO_INCREMENT,
+	member_id INT NOT NULL,
+	activity_type VARCHAR(1) NOT NULL,
+	point INT NOT NULL,
+	rec_created_by VARCHAR(36) NOT NULL,
+	rec_created_when VARCHAR(128) NOT NULL,
+	rec_modified_by VARCHAR(36),
+	rec_modified_when VARCHAR(128),
+	rec_status INT NOT NULL DEFAULT 0,
+	FOREIGN KEY (activity_type) REFERENCES point_activity_type_ref(activity_type),
+	FOREIGN KEY (member_id) REFERENCES member(member_id),
+	FOREIGN KEY (rec_status) REFERENCES rec_status_ref (rec_status_id),
+	FOREIGN KEY (rec_created_by) REFERENCES users(user_id),
+	FOREIGN KEY (rec_modified_by) REFERENCES users(user_id)
+	);
+
+CREATE OR REPLACE VIEW point_history_vu AS (SELECT * FROM point_history);
+
+SHOW ENGINE INNODB STATUS;
