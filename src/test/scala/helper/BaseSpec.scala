@@ -2,7 +2,7 @@ package helper
 
 import context.CoreContext
 import org.specs2.mutable.Specification
-import org.specs2.specification.Fragments
+import org.specs2.specification.core.Fragments
 
 /**
   * * # Created by wacharint on 3/3/16.

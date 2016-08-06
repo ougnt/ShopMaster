@@ -19,7 +19,7 @@ import scalafx.scene.layout.{BorderPane, FlowPane, GridPane}
 /**
   * * # Created by wacharint on 7/25/2016 AD.
   **/
-class MemberInfoPane(displayMode: DisplayMode, memberId: Int = 0)(implicit context: CoreContext) extends BorderPane
+class MemberInfoPane(displayMode: DisplayMode, memberId: Int = 0, overrideDataModel: Option[IMemberInfoModel] = None)(implicit context: CoreContext) extends BorderPane
 {
 
     stylesheets = List(getClass.getResource("/style.css").toExternalForm)
@@ -341,7 +341,10 @@ class MemberInfoPane(displayMode: DisplayMode, memberId: Int = 0)(implicit conte
 
     def loadDataModel(): IMemberInfoModel =
     {
-        if (displayMode == DisplayMode.Register)
+        if(overrideDataModel.isDefined)
+        {
+            overrideDataModel.get
+        } else if (displayMode == DisplayMode.Register)
         {
             new RegistrationModel
         } else if (displayMode == DisplayMode.Edit)

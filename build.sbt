@@ -11,6 +11,9 @@ libraryDependencies += "com.scalarx" % "scalarx_2.10" % "0.1"
 libraryDependencies += "org.scalafx" % "scalafx_2.11" % "8.0.92-R10"
 libraryDependencies += "joda-time" % "joda-time" % "2.9.4"
 libraryDependencies += "mysql" % "mysql-connector-java" % "5.1.12"
+
+libraryDependencies += "org.specs2" % "specs2_2.11" % "3.7"
+
 //
 //libraryDependencies ++= Seq(
 //    jdbc,
@@ -20,3 +23,4 @@ libraryDependencies += "mysql" % "mysql-connector-java" % "5.1.12"
 //)
 
 unmanagedJars in Compile += Attributed.blank(file(System.getenv("JAVA_HOME") + "/jre/lib/ext/jfxrt.jar"))
+unmanagedJars in Test += Attributed.blank(file(System.getenv("JAVA_HOME") + "/jre/lib/ext/jfxrt.jar"))
