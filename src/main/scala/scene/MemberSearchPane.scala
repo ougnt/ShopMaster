@@ -7,10 +7,12 @@ import context.CoreContext
 import model.MemberSearchModel
 import repository.MemberRepository
 
+import scala.concurrent.Future
 import scalafx.beans.property.{ObjectProperty, StringProperty}
 import scalafx.collections.ObservableBuffer
 import scalafx.scene.control._
 import scalafx.scene.layout.{BorderPane, FlowPane}
+import scala.concurrent.ExecutionContext.Implicits.global
 
 /**
   * * # Created by wacharint on 7/27/2016 AD.
@@ -90,9 +92,21 @@ class MemberSearchPane(openMemberDetailCallback: (MemberRepository) => Unit)(imp
             }
         }
 
-        val searchButton = new Button(model.searchButton) {
-            onAction = new EventHandler[ActionEvent] {
-                override def handle(event: ActionEvent): Unit = {
+        Future
+        {
+            while(searchTextField.width.value == 0 )
+            {
+                Thread.sleep(10)
+                searchTextField.requestFocus()
+            }
+        }
+
+        val searchButton = new Button(model.searchButton)
+        {
+            onAction = new EventHandler[ActionEvent]
+            {
+                override def handle(event: ActionEvent): Unit =
+                {
                     model.searchKeyword.update(searchTextField.text.apply())
                 }
             }

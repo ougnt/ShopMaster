@@ -1,7 +1,9 @@
 package model
 
 import context.CoreContext
+import exception.MemberIsInactiveException
 import repository.MemberRepository
+import rx.Obs
 
 /**
   * * # Created by wacharint on 8/1/2016 AD.
@@ -18,6 +20,31 @@ class MemberDetailModel(memberId: Int)(implicit context: CoreContext) extends IM
     sex.update(member.sex)
     point.update(member.point)
     isActive.update(member.recStatus.equals(1))
+
+    // <editor-fold desc="obs">
+
+    val pointObs = Obs(point, "onPointChange")(() =>
+    {
+        //
+    })
+
+    //</editor-fold>
+
+    // <editor-fold desc="def">
+
+    def addPoint(newPoint: Int) =
+    {
+        if( member.recStatus.equals(0) )
+        {
+            throw new MemberIsInactiveException("The member_id: %s is inactive".format(member.memberId))
+        } else
+        {
+            point.update(point() + newPoint)
+            member.point = point()
+            member.update(Seq("member_id"))
+        }
+    }
+    // </editor-fold>
 
     override val saveButtonVisible: Boolean = false
     override val editButtonVisible: Boolean = true

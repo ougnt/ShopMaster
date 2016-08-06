@@ -1,5 +1,6 @@
 package model
 
+import exception.MemberIsInactiveException
 import helper.BaseSpec
 import org.joda.time.DateTime
 import repository.MemberRepository
@@ -35,8 +36,61 @@ class MemberDetailModelSpec extends BaseSpec
 
 
                     // </editor-fold>
-                }
+            }
         }
+
+    """Add point function""" should
+    {
+        """add point to the active member""" in
+        {
+            // <editor-fold desc="Setup">
+
+            val member = generateTestActiveMember
+            val testModel = new MemberDetailModel(member.memberId)
+            val currentPoint = member.point
+
+            // </editor-fold>
+
+            // <editor-fold desc="Execute">
+
+            testModel.addPoint(10)
+
+            // </editor-fold>
+
+            // <editor-fold desc="Verify">
+
+            testModel.point() mustEqual currentPoint + 10
+            val dbPoint = new MemberRepository().get(Seq("member_id" -> testModel.member.memberId.toString)).head.asInstanceOf[MemberRepository].point
+            dbPoint mustEqual currentPoint + 10
+
+            // </editor-fold>
+        }
+
+        """not add point to the inactive member""" in
+        {
+            // <editor-fold desc="Setup">
+
+            val member = generateTestInactiveMember
+            val testModel = new MemberDetailModel(member.memberId)
+            val currentPoint = member.point
+
+            // </editor-fold>
+
+            // <editor-fold desc="Execute">
+
+            testModel.addPoint(10) must throwA[MemberIsInactiveException]
+
+            // </editor-fold>
+
+            // <editor-fold desc="Verify">
+
+            testModel.point() mustEqual currentPoint
+            val dbPoint = new MemberRepository().get(Seq("member_id" -> testModel.member.memberId.toString)).head.asInstanceOf[MemberRepository].point
+            dbPoint mustEqual currentPoint
+
+            // </editor-fold>
+        }
+    }
 
     def generateTestActiveMember =
     {
@@ -56,7 +110,7 @@ class MemberDetailModelSpec extends BaseSpec
         ret
     }
 
-    def generateTestInactiveMember = new MemberRepository()
+    def generateTestInactiveMember =
     {
         val ret = new MemberRepository()
         {
