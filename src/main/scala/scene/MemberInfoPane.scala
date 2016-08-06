@@ -229,7 +229,25 @@ class MemberInfoPane(displayMode: DisplayMode, memberId: Int = 0, overrideDataMo
         id = "add-point-button"
         text = dataModel.addPointButtonText
         onAction = new EventHandler[ActionEvent] {
-            override def handle(event: ActionEvent): Unit = ???
+            override def handle(event: ActionEvent): Unit =
+            {
+
+                try
+                {
+                    dataModel.asInstanceOf[MemberDetailModel].addPoint(new TextInputDialog(defaultValue = "0")
+                    {
+                        title = "Add points"
+                        contentText = "Please enter points to be added to the member here: "
+                    }.showAndWait().getOrElse("0").toInt)
+                } catch
+                {
+                    case e: Exception => new Alert(AlertType.Error)
+                    {
+                        title = "Invalid input"
+                        contentText = "Please enter only numbers"
+                    }.showAndWait()
+                }
+            }
         }
     }
     buttonContents ::= addPointButton
