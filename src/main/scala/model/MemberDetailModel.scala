@@ -2,7 +2,9 @@ package model
 
 import context.CoreContext
 import exception.MemberIsInactiveException
-import repository.MemberRepository
+import model.MemberDetailModel.PointActivityAction
+import model.MemberDetailModel.PointActivityAction.PointActivityAction
+import repository.{MemberRepository, PointActivityHistoryRepository}
 import rx.Obs
 
 /**
@@ -34,7 +36,7 @@ class MemberDetailModel(memberId: Int)(implicit context: CoreContext) extends IM
 
     def addPoint(newPoint: Int) =
     {
-        if( member.recStatus.equals(0) )
+        if (member.recStatus.equals(0))
         {
             throw new MemberIsInactiveException("The member_id: %s is inactive".format(member.memberId))
         } else
@@ -44,6 +46,25 @@ class MemberDetailModel(memberId: Int)(implicit context: CoreContext) extends IM
             member.update(Seq("member_id"))
         }
     }
+
+    def sendPointActivityMessage(action: PointActivityAction, points: Int) =
+    {
+        val pointActivityHistoryRepository = new PointActivityHistoryRepository
+        {
+            memberId = member.memberId
+            activityType = action match
+            {
+                case PointActivityAction.Add => "A"
+                case PointActivityAction.Redeem => "R"
+                case PointActivityAction.Update => "U"
+                case _ => "A"
+            }
+            point = points
+        }
+
+        pointActivityHistoryRepository.insert()
+    }
+
     // </editor-fold>
 
     override val saveButtonVisible: Boolean = false
@@ -52,4 +73,13 @@ class MemberDetailModel(memberId: Int)(implicit context: CoreContext) extends IM
     override val clearButtonVisible: Boolean = false
     override val addPointButtonVisible: Boolean = true
     override val usePointButtonVisible: Boolean = true
+}
+
+object MemberDetailModel
+{
+    object PointActivityAction extends Enumeration
+    {
+        type PointActivityAction = Value
+        val Add, Redeem, Update = Value
+    }
 }

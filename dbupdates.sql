@@ -83,7 +83,7 @@ CREATE TABLE IF NOT EXISTS point_activity_type_ref (
 	description VARCHAR(32) NOT NULL
 );
 
-INSERT INTO point_activity_type_ref  (activity_type, description) VALUES ('A', 'Add point'), ('U', 'Use point');
+INSERT INTO point_activity_type_ref  (activity_type, description) VALUES ('A', 'Add points'), ('R', 'Redeem points'),('U','Update points available');
 
 CREATE TABLE IF NOT EXISTS point_history (
 	history_id INT NOT NULL PRIMARY KEY AUTO_INCREMENT,

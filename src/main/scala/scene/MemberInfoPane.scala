@@ -4,6 +4,7 @@ import javafx.event.{ActionEvent, EventHandler}
 
 import context.CoreContext
 import exception.MemberIsInactiveException
+import model.MemberDetailModel.PointActivityAction
 import model.{IMemberInfoModel, MemberDetailModel, RegistrationModel}
 import org.joda.time.DateTime
 import org.joda.time.chrono.BuddhistChronology
@@ -229,18 +230,23 @@ class MemberInfoPane(displayMode: DisplayMode, memberId: Int = 0, overrideDataMo
     {
         id = "add-point-button"
         text = dataModel.addPointButtonText
-        onAction = new EventHandler[ActionEvent] {
+        onAction = new EventHandler[ActionEvent]
+        {
             override def handle(event: ActionEvent): Unit =
             {
 
                 try
                 {
-                    dataModel.asInstanceOf[MemberDetailModel].addPoint(new TextInputDialog(defaultValue = "0")
+                    val pointsToBeAdded = new TextInputDialog(defaultValue = "0")
                     {
                         title = "Add points"
                         contentText = "Please enter points to be added to the member here: "
-                    }.showAndWait().getOrElse("0").toInt)
+                    }.showAndWait().getOrElse("0").toInt
+
+                    dataModel.asInstanceOf[MemberDetailModel].addPoint(pointsToBeAdded)
                     pointTextField.text = dataModel.point().toString
+                    dataModel.asInstanceOf[MemberDetailModel].sendPointActivityMessage(PointActivityAction.Add,
+                        pointsToBeAdded)
                 } catch
                 {
                     case e: MemberIsInactiveException => new Alert(AlertType.Error)
@@ -261,16 +267,17 @@ class MemberInfoPane(displayMode: DisplayMode, memberId: Int = 0, overrideDataMo
     buttonContents ::= addPointButton
     addPointButton.visible = dataModel.addPointButtonVisible
 
-    val usePointButton = new Button()
+    val RedeemPointButton = new Button()
     {
-        id = "use-point-button"
-        text = dataModel.usePointButtonText
-        onAction = new EventHandler[ActionEvent] {
+        id = "redeem-point-button"
+        text = dataModel.redeemPointButtonText
+        onAction = new EventHandler[ActionEvent]
+        {
             override def handle(event: ActionEvent): Unit = ???
         }
     }
-    buttonContents ::= usePointButton
-    usePointButton.visible = dataModel.usePointButtonVisible
+    buttonContents ::= RedeemPointButton
+    RedeemPointButton.visible = dataModel.usePointButtonVisible
 
     val editButton = new Button()
     {
@@ -389,7 +396,7 @@ class MemberInfoPane(displayMode: DisplayMode, memberId: Int = 0, overrideDataMo
 
     def loadDataModel(): IMemberInfoModel =
     {
-        if(overrideDataModel.isDefined)
+        if (overrideDataModel.isDefined)
         {
             overrideDataModel.get
         } else if (displayMode == DisplayMode.Register)
