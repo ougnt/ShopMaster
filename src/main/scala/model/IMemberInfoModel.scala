@@ -62,7 +62,7 @@ abstract class IMemberInfoModel(implicit context: CoreContext)
 
     def save(): Unit = ???
 
-    def edit(): Unit = ???
+    def edit(): String = ???
 
     def toggleActiveStatus(): Unit =
     {

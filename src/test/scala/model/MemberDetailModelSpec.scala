@@ -3,6 +3,7 @@ package model
 import exception.MemberIsInactiveException
 import helper.BaseSpec
 import org.joda.time.DateTime
+import org.specs2.matcher.Matcher
 import repository.MemberRepository
 
 import scala.util.Random
@@ -13,31 +14,31 @@ import scala.util.Random
 class MemberDetailModelSpec extends BaseSpec
 {
     """When open the member detail model""" should
-        {
-            """display only inactive/edit button""" in
-                {
-                    // <editor-fold desc="Setup">
+    {
+        """display only inactive/edit button""" in
+            {
+                // <editor-fold desc="Setup">
 
-                    val member = generateTestActiveMember
+                val member = generateTestActiveMember
 
-                    // </editor-fold>
+                // </editor-fold>
 
-                    // <editor-fold desc="Execute">
+                // <editor-fold desc="Execute">
 
-                    val testModel = new MemberDetailModel(member.memberId)
-                    // </editor-fold>
+                val testModel = new MemberDetailModel(member.memberId)
+                // </editor-fold>
 
-                    // <editor-fold desc="Verify">
+                // <editor-fold desc="Verify">
 
-                    testModel.clearButtonVisible mustEqual false
-                    testModel.saveButtonVisible mustEqual false
-                    testModel.editButtonVisible mustEqual true
-                    testModel.inActiveButtonVisible mustEqual true
+                testModel.clearButtonVisible mustEqual false
+                testModel.saveButtonVisible mustEqual false
+                testModel.editButtonVisible mustEqual true
+                testModel.inActiveButtonVisible mustEqual true
 
 
-                    // </editor-fold>
-            }
+                // </editor-fold>
         }
+    }
 
     """Add point function""" should
     {
@@ -92,6 +93,77 @@ class MemberDetailModelSpec extends BaseSpec
         }
     }
 
+    """edit function""" should
+    {
+        """update the information of the member""" in
+        {
+            """update all the member's info""" in
+            {
+                // <editor-fold desc="Setup">
+
+                val member = generateTestActiveMember
+                val testModel = new MemberDetailModel(member.memberId)
+                val currentPoint = member.point
+                testModel.firstName.update("test")
+                testModel.lastName.update("lastNameJa")
+                testModel.birth.update(DateTime.now().minusYears(19))
+                testModel.tel.update("123456787654")
+                testModel.address.update("testUpAddress")
+                testModel.id.update(12345643)
+                testModel.sex.update("U")
+
+                // </editor-fold>
+
+                // <editor-fold desc="Execute">
+
+                val resp = testModel.edit()
+
+                // </editor-fold>
+
+                // <editor-fold desc="Verify">
+
+                val dbMember = new MemberRepository().get(Seq("member_id" -> testModel.member.memberId.toString)).head.asInstanceOf[MemberRepository]
+                dbMember must beSameMember(testModel.member)
+                resp mustEqual ""
+
+                // </editor-fold>
+            }
+
+            """throw an MemberIsInactiveException if the member is inactive""" in
+            {
+                // <editor-fold desc="Setup">
+
+                val member = generateTestInactiveMember
+                val previousMember = member
+                val testModel = new MemberDetailModel(member.memberId)
+                val currentPoint = member.point
+                testModel.firstName.update("test")
+                testModel.lastName.update("lastNameJa")
+                testModel.birth.update(DateTime.now().minusYears(19))
+                testModel.tel.update("123456787654")
+                testModel.address.update("testUpAddress")
+                testModel.id.update(12345643)
+                testModel.sex.update("U")
+
+                // </editor-fold>
+
+                // <editor-fold desc="Execute">
+
+                val resp = testModel.edit()
+
+                // </editor-fold>
+
+                // <editor-fold desc="Verify">
+
+                val dbMember = new MemberRepository().get(Seq("member_id" -> testModel.member.memberId.toString)).head.asInstanceOf[MemberRepository]
+                dbMember must beSameMember(previousMember)
+                resp mustEqual "The member is currently inactive"
+
+                // </editor-fold>
+            }
+        }
+    }
+
     def generateTestActiveMember =
     {
         val ret = new MemberRepository()
@@ -128,6 +200,21 @@ class MemberDetailModelSpec extends BaseSpec
         ret.memberId = ret.insert()
         ret
     }
+
+    def beSameMember(exp: MemberRepository): Matcher[MemberRepository] = (act: MemberRepository) =>
+        (
+            act.memberId == exp.memberId &&
+            act.firstName == exp.firstName &&
+            act.lastName == exp.lastName &&
+            act.id == exp.id &&
+            act.tel == exp.tel &&
+            act.address == exp.address &&
+            act.sex == exp.sex &&
+            act.birth.getMillis == exp.birth.getMillis &&
+            act.point == exp.point,
+            "They are same member",
+            "They are difference member"
+        )
 
     override protected def beforeAll(): Unit =
     {}

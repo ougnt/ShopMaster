@@ -285,7 +285,27 @@ class MemberInfoPane(displayMode: DisplayMode, memberId: Int = 0, overrideDataMo
         text = dataModel.editButtonText
         onAction = new EventHandler[ActionEvent]
         {
-            override def handle(event: ActionEvent): Unit = ???
+            override def handle(event: ActionEvent): Unit =
+            {
+                val errorMsg = dataModel.edit()
+                if(errorMsg.length > 0)
+                {
+                    new Alert(AlertType.Error)
+                    {
+                        title = "Error"
+                        headerText = "Cannot update member information"
+                        contentText = errorMsg
+                    }.showAndWait()
+                } else
+                {
+                    new Alert(AlertType.Information)
+                    {
+                        title = "Success"
+                        headerText = "Update successfully"
+                        contentText = "The member details are updated"
+                    }.showAndWait()
+                }
+            }
         }
     }
     buttonContents ++= List(editButton)

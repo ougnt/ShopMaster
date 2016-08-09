@@ -1,5 +1,7 @@
 package model
 
+import java.sql.SQLException
+
 import context.CoreContext
 import exception.MemberIsInactiveException
 import model.MemberDetailModel.PointActivityAction
@@ -63,6 +65,30 @@ class MemberDetailModel(memberId: Int)(implicit context: CoreContext) extends IM
         }
 
         pointActivityHistoryRepository.insert()
+    }
+
+    override def edit(): String =
+    {
+        member.firstName = firstName()
+        member.lastName = lastName()
+        member.id = id()
+        member.tel = tel()
+        member.address = address()
+        member.sex = sex()
+        member.birth = birth()
+
+        try
+        {
+            if(member.recStatus != 1) {
+                throw new MemberIsInactiveException("The member is currently inactive")
+            }
+            member.update(Seq("member_id"))
+            ""
+        } catch
+        {
+            case e: MemberIsInactiveException => e.getMessage
+            case e: SQLException => e.getMessage
+        }
     }
 
     // </editor-fold>
