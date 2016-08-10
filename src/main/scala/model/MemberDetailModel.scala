@@ -99,6 +99,7 @@ class MemberDetailModel(memberId: Int)(implicit context: CoreContext) extends IM
     override val clearButtonVisible: Boolean = false
     override val addPointButtonVisible: Boolean = true
     override val usePointButtonVisible: Boolean = true
+    override val pointHistoryButtonVisible: Boolean = true
 }
 
 object MemberDetailModel

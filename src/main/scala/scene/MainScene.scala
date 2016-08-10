@@ -29,7 +29,7 @@ class MainScene(implicit context: CoreContext, terminator: () => Unit) extends S
     val memberRegistrationTab = new Tab
     {
         text = model.memberRegistrationTabText
-        content = new MemberInfoPane(DisplayMode.Register)
+        content = new MemberInfoPane(DisplayMode.Register, openMemberDetailTabCallback)
     }
     memberRegistrationTab.closable = false
 
@@ -55,9 +55,21 @@ class MainScene(implicit context: CoreContext, terminator: () => Unit) extends S
             text = member.firstName + " " + member.lastName
 
             closable = true
-            content = new MemberInfoPane(DisplayMode.Edit, member.memberId)
+            content = new MemberInfoPane(DisplayMode.Edit, openMemberPointHistoryTabCallback, member.memberId)
         }
         tabPane.tabs.add(newMemberDetailTab)
         tabPane.selectionModel.value.select(newMemberDetailTab)
+    }
+
+    def openMemberPointHistoryTabCallback(member: MemberRepository): Unit =
+    {
+        val newHistoryTab = new Tab
+        {
+            text = "Point activity transaction of " + member.firstName + " " + member.lastName
+            closable = true
+            content = new PointActivityHistoryPane(member)
+        }
+        tabPane.tabs.add(newHistoryTab)
+        tabPane.selectionModel.value.select(newHistoryTab)
     }
 }

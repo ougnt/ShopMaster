@@ -28,12 +28,14 @@ abstract class IMemberInfoModel(implicit context: CoreContext)
     val pointLabel = "Points"
     val addPointButtonText = "Add point"
     val redeemPointButtonText = "Redeem point"
+    val pointHistoryButtonText = "Points History"
     val saveButtonVisible: Boolean
     val clearButtonVisible: Boolean
     val editButtonVisible: Boolean
     val inActiveButtonVisible: Boolean
     val addPointButtonVisible: Boolean
     val usePointButtonVisible: Boolean
+    val pointHistoryButtonVisible: Boolean
 
     var firstName = Var(member.firstName)
     var lastName = Var(member.lastName)

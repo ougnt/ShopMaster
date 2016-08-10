@@ -27,4 +27,5 @@ class RegistrationModel(implicit context: CoreContext) extends IMemberInfoModel
     override val clearButtonVisible: Boolean = true
     override val addPointButtonVisible: Boolean = false
     override val usePointButtonVisible: Boolean = false
+    override val pointHistoryButtonVisible: Boolean = false
 }

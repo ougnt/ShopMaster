@@ -9,6 +9,7 @@ import model.{IMemberInfoModel, MemberDetailModel, RegistrationModel}
 import org.joda.time.DateTime
 import org.joda.time.chrono.BuddhistChronology
 import org.joda.time.format.DateTimeFormat
+import repository.MemberRepository
 import scene.MemberInfoPane.DisplayMode
 import scene.MemberInfoPane.DisplayMode.DisplayMode
 
@@ -21,7 +22,7 @@ import scalafx.scene.layout.{BorderPane, FlowPane, GridPane}
 /**
   * * # Created by wacharint on 7/25/2016 AD.
   **/
-class MemberInfoPane(displayMode: DisplayMode, memberId: Int = 0, overrideDataModel: Option[IMemberInfoModel] = None)(implicit context: CoreContext) extends BorderPane
+class MemberInfoPane(displayMode: DisplayMode, openHistoryTabCallback: (MemberRepository) => Unit, memberId: Int = 0)(implicit context: CoreContext) extends BorderPane
 {
 
     stylesheets = List(getClass.getResource("/style.css").toExternalForm)
@@ -226,6 +227,21 @@ class MemberInfoPane(displayMode: DisplayMode, memberId: Int = 0, overrideDataMo
     var buttonContents = List(saveButton)
     saveButton.visible = dataModel.saveButtonVisible
 
+    val pointHistoryButton = new Button()
+    {
+        id = "point-history-button"
+        text = dataModel.pointHistoryButtonText
+        onAction = new EventHandler[ActionEvent]
+        {
+            override def handle(event: ActionEvent): Unit =
+            {
+                openHistoryTabCallback(dataModel.member)
+            }
+        }
+    }
+    buttonContents ::= pointHistoryButton
+    pointHistoryButton.visible = dataModel.pointHistoryButtonVisible
+
     val addPointButton = new Button()
     {
         id = "add-point-button"
@@ -288,7 +304,7 @@ class MemberInfoPane(displayMode: DisplayMode, memberId: Int = 0, overrideDataMo
             override def handle(event: ActionEvent): Unit =
             {
                 val errorMsg = dataModel.edit()
-                if(errorMsg.length > 0)
+                if (errorMsg.length > 0)
                 {
                     new Alert(AlertType.Error)
                     {
@@ -416,10 +432,7 @@ class MemberInfoPane(displayMode: DisplayMode, memberId: Int = 0, overrideDataMo
 
     def loadDataModel(): IMemberInfoModel =
     {
-        if (overrideDataModel.isDefined)
-        {
-            overrideDataModel.get
-        } else if (displayMode == DisplayMode.Register)
+        if (displayMode == DisplayMode.Register)
         {
             new RegistrationModel
         } else if (displayMode == DisplayMode.Edit)
