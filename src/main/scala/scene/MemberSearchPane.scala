@@ -56,9 +56,19 @@ class MemberSearchPane(openMemberDetailCallback: (MemberRepository) => Unit)(imp
         }
 
         val table = new TableView[MemberRepository](members)
+
+        Future
         {
-            columns ++= List(nameCol, idCol, telCol)
+            while (table.width.value == 0)
+            {
+                Thread.sleep(5)
+            }
+            nameCol.prefWidth = table.width.value / 3
+            idCol.prefWidth = table.width.value / 3
+            telCol.prefWidth = table.width.value / 3
+            table.columns ++= List(nameCol, idCol, telCol)
         }
+
 
         table.onMouseClicked = new EventHandler[MouseEvent]
         {
@@ -94,7 +104,7 @@ class MemberSearchPane(openMemberDetailCallback: (MemberRepository) => Unit)(imp
 
         Future
         {
-            while(searchTextField.width.value == 0 )
+            while (searchTextField.width.value == 0)
             {
                 Thread.sleep(10)
                 searchTextField.requestFocus()
