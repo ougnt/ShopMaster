@@ -9,7 +9,7 @@ import model.{IMemberInfoModel, MemberDetailModel, RegistrationModel}
 import org.joda.time.DateTime
 import org.joda.time.chrono.BuddhistChronology
 import org.joda.time.format.DateTimeFormat
-import repository.MemberRepository
+import repository.{MemberRepository, PointRedeemOptionRepository}
 import scene.MemberInfoPane.DisplayMode
 import scene.MemberInfoPane.DisplayMode.DisplayMode
 
@@ -220,7 +220,24 @@ class MemberInfoPane(displayMode: DisplayMode, openHistoryTabCallback: (MemberRe
         {
             override def handle(event: ActionEvent): Unit =
             {
-                saveDataModel()
+                try
+                {
+                    saveDataModel()
+
+                    new Alert(AlertType.Information)
+                    {
+                        headerText = "Registration Message"
+                        contentText = "User Created"
+                        clearData()
+                    }.showAndWait()
+                } catch
+                {
+                    case e: Exception => new Alert(AlertType.Error)
+                    {
+                        headerText = "Registration Error"
+                        contentText = "Cannot create member due to " + e.getMessage
+                    }.showAndWait()
+                }
             }
         }
     }
@@ -289,7 +306,48 @@ class MemberInfoPane(displayMode: DisplayMode, openHistoryTabCallback: (MemberRe
         text = dataModel.redeemPointButtonText
         onAction = new EventHandler[ActionEvent]
         {
-            override def handle(event: ActionEvent): Unit = ???
+            override def handle(event: ActionEvent): Unit =
+            {
+                val options = new PointRedeemOptionRepository().get(Seq("rec_status" -> "1")).asInstanceOf[Seq[PointRedeemOptionRepository]].filter(
+                    _.point <= dataModel.member.point).reverse
+
+                if(!options.isEmpty)
+                {
+                    var optionsText: List[String] = List()
+
+                    options.foreach(o => optionsText ::= o.point.toString + " points with " + o.discount + " Baht discount")
+
+                    val dialog = new ChoiceDialog(optionsText.head, optionsText)
+                    {
+                        headerText = "Points redemption"
+                        contentText = "Please select redemption options"
+                    }
+
+                    val res = dialog.showAndWait()
+                    if (res.isDefined)
+                    {
+                        val selectStrings = res.get.split(" ")
+                        val redeemingPoint = selectStrings(0).toInt
+                        dataModel.asInstanceOf[MemberDetailModel].redeemPoint(redeemingPoint)
+                        dataModel.asInstanceOf[MemberDetailModel].sendPointActivityMessage(PointActivityAction.Redeem,
+                            -redeemingPoint)
+                        new Alert(AlertType.Information)
+                        {
+                            headerText = "Redeem Result"
+                            contentText = redeemingPoint + " points redeemed for " + selectStrings(3) + " Baht"
+                        }.showAndWait()
+                        pointTextField.text = dataModel.point().toString
+                    }
+                } else
+                {
+                    new Alert(AlertType.Warning)
+                    {
+                        title = "Warning"
+                        headerText = "Point redeeming warning"
+                        contentText = "Not enough point to redeem"
+                    }.showAndWait()
+                }
+            }
         }
     }
     buttonContents ::= RedeemPointButton

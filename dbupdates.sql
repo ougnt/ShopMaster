@@ -105,3 +105,40 @@ CREATE TABLE IF NOT EXISTS point_history (
 CREATE OR REPLACE VIEW point_history_vu AS (SELECT * FROM point_history);
 
 SHOW ENGINE INNODB STATUS;
+
+-- -------------------------------------------
+-- version 4.0
+-- -------------------------------------------
+UPDATE db_info SET db_version = 4;
+
+CREATE TABLE IF NOT EXISTS point_redeem_options (
+	redeem_option_id INT NOT NULL PRIMARY KEY AUTO_INCREMENT,
+	point INT NOT NULL,
+	discount INT NOT NULL,
+	rec_created_by VARCHAR(36) NOT NULL,
+	rec_created_when VARCHAR(128) NOT NULL,
+	rec_modified_by VARCHAR(36),
+	rec_modified_when VARCHAR(128),
+	rec_status INT NOT NULL DEFAULT 0,
+	FOREIGN KEY (rec_status) REFERENCES rec_status_ref (rec_status_id),
+	FOREIGN KEY (rec_created_by) REFERENCES users(user_id),
+	FOREIGN KEY (rec_modified_by) REFERENCES users(user_id)
+);
+
+INSERT INTO point_redeem_options
+(point, discount, rec_created_by, rec_created_when, rec_status)
+VALUE
+(100, 10, 'a9998ce6-da2d-11e5-b5d2-0a1d41d68578', '2016-08-02T00:30:41.237+07:00',1),
+(200, 20, 'a9998ce6-da2d-11e5-b5d2-0a1d41d68578', '2016-08-02T00:30:41.237+07:00',1),
+(300, 30, 'a9998ce6-da2d-11e5-b5d2-0a1d41d68578', '2016-08-02T00:30:41.237+07:00',1),
+(400, 40, 'a9998ce6-da2d-11e5-b5d2-0a1d41d68578', '2016-08-02T00:30:41.237+07:00',1),
+(500, 50, 'a9998ce6-da2d-11e5-b5d2-0a1d41d68578', '2016-08-02T00:30:41.237+07:00',1),
+(600, 60, 'a9998ce6-da2d-11e5-b5d2-0a1d41d68578', '2016-08-02T00:30:41.237+07:00',1),
+(700, 70, 'a9998ce6-da2d-11e5-b5d2-0a1d41d68578', '2016-08-02T00:30:41.237+07:00',1),
+(800, 80, 'a9998ce6-da2d-11e5-b5d2-0a1d41d68578', '2016-08-02T00:30:41.237+07:00',1),
+(900, 90, 'a9998ce6-da2d-11e5-b5d2-0a1d41d68578', '2016-08-02T00:30:41.237+07:00',1),
+(1000, 100, 'a9998ce6-da2d-11e5-b5d2-0a1d41d68578', '2016-08-02T00:30:41.237+07:00',1);
+
+CREATE OR REPLACE VIEW point_redeem_options_vu AS (SELECT * FROM point_redeem_options);
+
+SHOW ENGINE INNODB STATUS;

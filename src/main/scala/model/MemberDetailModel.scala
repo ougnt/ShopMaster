@@ -49,6 +49,19 @@ class MemberDetailModel(memberId: Int)(implicit context: CoreContext) extends IM
         }
     }
 
+    def redeemPoint(pointToBeRedeemed: Int) =
+    {
+        if (member.recStatus.equals(0))
+        {
+            throw new MemberIsInactiveException("The member_id: %s is inactive".format(member.memberId))
+        } else
+        {
+            point.update(point() - pointToBeRedeemed)
+            member.point = point()
+            member.update(Seq("member_id"))
+        }
+    }
+
     def sendPointActivityMessage(action: PointActivityAction, points: Int) =
     {
         val pointActivityHistoryRepository = new PointActivityHistoryRepository
