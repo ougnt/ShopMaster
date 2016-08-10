@@ -38,5 +38,5 @@
     -fx-fill: linear-gradient(from 0% 0% to 100% 200%, repeat, aqua 0%, red 50%);
     -fx-stroke: black;
     -fx-stroke-width: 1;
-    -fx-text-fill: Blue;
+    -fx-text-fill: Grey;
 }

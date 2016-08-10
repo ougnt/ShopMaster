@@ -7,7 +7,7 @@ import repository.{PointActivityHistoryRepository, MemberRepository}
 import scala.concurrent.Future
 import scalafx.beans.property.StringProperty
 import scalafx.collections.ObservableBuffer
-import scalafx.scene.control.{TableColumn, TableView}
+import scalafx.scene.control.{Label, TableColumn, TableView}
 import scalafx.scene.layout.BorderPane
 
 import scala.concurrent.ExecutionContext.Implicits.global
@@ -20,12 +20,11 @@ class PointActivityHistoryPane(val member: MemberRepository)(implicit context: C
     val dataModel = new PointActivityHistoryModel(member)
     val historyTable = generateHistoryTable()
     center = historyTable
+    top = generateHeaderPane()
     id = "point-activity-history-pane"
 
     def generateHistoryTable(): TableView[PointActivityHistoryRepository] =
     {
-        // TODO : add top pane to fill in the member name and last name
-
         val historyBuffer = ObservableBuffer(dataModel.histories.sortBy(_.recCreatedWhen.toString()).reverse)
 
         val activityTypeCol = new TableColumn[PointActivityHistoryRepository, String](dataModel.activityTypeColumnText)
@@ -63,5 +62,18 @@ class PointActivityHistoryPane(val member: MemberRepository)(implicit context: C
         }
 
         table
+    }
+
+    def generateHeaderPane(): BorderPane =
+    {
+        val pane = new BorderPane
+        {
+            val label = new Label(dataModel.member.firstName + " " + dataModel.member.lastName)
+            {
+                id = "header-label"
+            }
+            center = label
+        }
+        pane
     }
 }
