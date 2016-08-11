@@ -14,6 +14,21 @@ import scalafx.scene.layout.BorderPane
   **/
 class MainScene(implicit context: CoreContext, terminator: () => Unit) extends Scene(800, 600)
 {
+    implicit def menuItemHandler(itemName: String) =
+    {
+        itemName match
+        {
+            case MenuUtil.exitMenuItemText => terminator()
+            case MenuUtil.memberSearchMenuItemText =>
+            {
+                tabPane.selectionModel.value.select(memberSearchTab)
+            }
+            case MenuUtil.registerNewMemberMenuItemText =>
+            {
+                tabPane.selectionModel.value.select(memberRegistrationTab)
+            }
+        }
+    }
 
     val model = new MainModel
     stylesheets = List(getClass.getResource("/style.css").toExternalForm)
@@ -42,7 +57,7 @@ class MainScene(implicit context: CoreContext, terminator: () => Unit) extends S
 
     val mainPane = new BorderPane
     {
-        top = Util.generateMenuBar
+        top = MenuUtil.generateMenuBar
         center = tabPane
     }
 

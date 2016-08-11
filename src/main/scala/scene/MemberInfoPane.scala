@@ -322,7 +322,7 @@ class MemberInfoPane(displayMode: DisplayMode, openHistoryTabCallback: (MemberRe
                         headerText = "Points redemption"
                         contentText = "Please select redemption options"
                     }
-                    
+
                     val res = dialog.showAndWait()
                     if (res.isDefined)
                     {
