@@ -322,13 +322,28 @@ class MemberInfoPane(displayMode: DisplayMode, openHistoryTabCallback: (MemberRe
                         headerText = "Points redemption"
                         contentText = "Please select redemption options"
                     }
-
+                    
                     val res = dialog.showAndWait()
                     if (res.isDefined)
                     {
                         val selectStrings = res.get.split(" ")
                         val redeemingPoint = selectStrings(0).toInt
-                        dataModel.asInstanceOf[MemberDetailModel].redeemPoint(redeemingPoint)
+                        try
+                        {
+                            dataModel.asInstanceOf[MemberDetailModel].redeemPoint(redeemingPoint)
+                        } catch
+                        {
+                            case e: MemberIsInactiveException =>
+                            {
+                                new Alert(AlertType.Warning)
+                                {
+                                    title = "Warning"
+                                    headerText = "Point redeeming warning"
+                                    contentText = "The member is inactive"
+                                }.showAndWait()
+                                return
+                            }
+                        }
                         dataModel.asInstanceOf[MemberDetailModel].sendPointActivityMessage(PointActivityAction.Redeem,
                             -redeemingPoint)
                         new Alert(AlertType.Information)
