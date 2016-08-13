@@ -368,10 +368,13 @@ trait InjectAble
             """ WHERE #columns# = N'#values#'""")
 
         keyValues.foreach(kv =>
-            sqlStatement = sqlStatement.replace("#columns#", kv).replace("#values#",
-                fields.find(_.getName.replaceAll(
-                    """([A-Z])""",
-                    """_$1""").equalsIgnoreCase(kv)).get.get(this).toString).concat("""AND #columns# = N'#values#'""")
+            {
+                sqlStatement = sqlStatement.replace("#columns#", kv).replace("#values#",
+                    fields.find(_.getName.replaceAll(
+                        """([A-Z])""",
+                        """_$1""").equalsIgnoreCase(kv)).get.get(this).toString).concat(
+                    """AND #columns# = N'#values#'""")
+            }
         )
 
         sqlStatement = sqlStatement.replace(""" WHERE #columns# = N'#values#'""", "")

@@ -48,9 +48,15 @@ class MainScene(implicit context: CoreContext, terminator: () => Unit) extends S
     }
     memberRegistrationTab.closable = false
 
+    val settingTab = new Tab
+    {
+        text = model.settingTabText
+        content = new PointRedeemOptionSettingPane
+    }
+
     val tabPane = new TabPane
     {
-        tabs = List(memberSearchTab, memberRegistrationTab)
+        tabs = List(memberSearchTab, memberRegistrationTab) ++ List(settingTab)
     }
 
     //    tabPane.setTabClosingPolicy(TabPane.TabClosingPolicy.Unavailable)

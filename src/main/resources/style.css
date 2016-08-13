@@ -24,6 +24,13 @@
     -fx-vgap: 5;
 }
 
+#point-redeem-option-setting-model-flow-pane {
+    -fx-alignment: "center-right";
+    -fx-padding: 10;
+    -fx-hgap: 10;
+    -fx-vgap: 5;
+}
+
 #member-info-pane {
     -fx-padding: 5;
 }

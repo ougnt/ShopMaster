@@ -9,7 +9,7 @@ import context.CoreContext
   **/
 class PointRedeemOptionRepository(implicit context: CoreContext) extends InjectAble
 {
-    var redeem_option_id = 0
+    var redeemOptionId = 0
     var point = 0
     var discount = 0
     recStatus = 1
