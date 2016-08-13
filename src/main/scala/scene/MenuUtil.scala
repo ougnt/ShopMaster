@@ -14,6 +14,7 @@ object MenuUtil
     val navigateMenuText = "Navigate"
     val memberSearchMenuItemText = "Member Search"
     val registerNewMemberMenuItemText = "Register a new member"
+    val redemptionSettingMenuItemText = "Redemption Setting"
 
     def generateMenuBar(implicit menuItemClickHandler: (String) => Unit): MenuBar =
     {
@@ -57,10 +58,21 @@ object MenuUtil
             }
         }
 
+        val redemptionSettingMenuItem = new MenuItem()
+        {
+            text = redemptionSettingMenuItemText
+            onAction = new EventHandler[ActionEvent] {
+                override def handle(event: ActionEvent): Unit =
+                {
+                    menuItemClickHandler(redemptionSettingMenuItemText)
+                }
+            }
+        }
+
         val navigationMenu = new Menu()
         {
             text = navigateMenuText
-            items = List(memberSearchMenuItem, registerNewMemberMenuItem)
+            items = List(memberSearchMenuItem, registerNewMemberMenuItem, redemptionSettingMenuItem)
         }
 
         val menuBar = new MenuBar()

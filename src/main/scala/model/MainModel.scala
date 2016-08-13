@@ -7,5 +7,5 @@ class MainModel
 {
     val memberSearchTabText = "Member Search"
     val memberRegistrationTabText = "Member Registration"
-    val settingTabText = "Setting"
+    val redemptionSettingTab = "Redemption Setting"
 }

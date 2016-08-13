@@ -19,6 +19,7 @@ import scalafx.scene.layout.{FlowPane, BorderPane}
   **/
 class PointRedeemOptionSettingPane(implicit context: CoreContext) extends BorderPane
 {
+    // TODO : Indicator dirty so the commit button have some action
     id = "point-redeem-option-setting-pane"
     var dataModel = new PointRedeemOptionSettingModel()
     val optionTable = generateOptionTable()

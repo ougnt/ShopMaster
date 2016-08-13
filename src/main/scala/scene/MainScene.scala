@@ -27,6 +27,14 @@ class MainScene(implicit context: CoreContext, terminator: () => Unit) extends S
             {
                 tabPane.selectionModel.value.select(memberRegistrationTab)
             }
+            case MenuUtil.redemptionSettingMenuItemText =>
+            {
+                if(!tabPane.tabs.contains(redemptionSettingTab))
+                {
+                    tabPane.tabs.add(redemptionSettingTab)
+                }
+                tabPane.selectionModel.value.select(redemptionSettingTab)
+            }
         }
     }
 
@@ -48,15 +56,15 @@ class MainScene(implicit context: CoreContext, terminator: () => Unit) extends S
     }
     memberRegistrationTab.closable = false
 
-    val settingTab = new Tab
+    val redemptionSettingTab = new Tab
     {
-        text = model.settingTabText
+        text = model.redemptionSettingTab
         content = new PointRedeemOptionSettingPane
     }
 
     val tabPane = new TabPane
     {
-        tabs = List(memberSearchTab, memberRegistrationTab) ++ List(settingTab)
+        tabs = List(memberSearchTab, memberRegistrationTab)
     }
 
     //    tabPane.setTabClosingPolicy(TabPane.TabClosingPolicy.Unavailable)
