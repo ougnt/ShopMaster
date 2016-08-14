@@ -23,7 +23,7 @@ class MemberSearchModel(scene: MemberSearchPane)(implicit context: CoreContext)
     val idColumnText = "ID"
     val telColumnText = "Tel"
     val keywordLabel = "Enter search criteria here"
-    val searchButton = "Search"
+    val searchButtonText = "Search"
 
     private val searchObs = new Obs(searchKeyword, onSearchChange)
     private var lastAction = DateTime.now

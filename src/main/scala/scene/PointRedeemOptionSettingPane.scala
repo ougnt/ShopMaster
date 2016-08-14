@@ -12,17 +12,18 @@ import scala.concurrent.Future
 import scalafx.beans.property.ObjectProperty
 import scalafx.collections.ObservableBuffer
 import scalafx.scene.control._
-import scalafx.scene.layout.{FlowPane, BorderPane}
+import scalafx.scene.layout.{BorderPane, FlowPane}
 
 /**
   * * # Created by wacharint on 8/11/2016 AD.
   **/
 class PointRedeemOptionSettingPane(implicit context: CoreContext) extends BorderPane
 {
-    // TODO : Indicator dirty so the commit button have some action
     id = "point-redeem-option-setting-pane"
     var dataModel = new PointRedeemOptionSettingModel()
     val optionTable = generateOptionTable()
+    var isDirty = false
+    var commitButton: Button = null
     center = optionTable
     bottom = generateButtonFlowPane()
 
@@ -65,13 +66,14 @@ class PointRedeemOptionSettingPane(implicit context: CoreContext) extends Border
 
     def generateButtonFlowPane(): FlowPane =
     {
-        val commitButton = new Button()
+        commitButton = new Button()
         {
             text = dataModel.commitButtonText
             onAction = new EventHandler[ActionEvent] {
                 override def handle(event: ActionEvent): Unit =
                 {
                     commitTableInfo()
+                    commitButton.id = "something-else"
                 }
             }
         }
@@ -84,6 +86,7 @@ class PointRedeemOptionSettingPane(implicit context: CoreContext) extends Border
                 {
                     dataModel = new PointRedeemOptionSettingModel()
                     center = generateOptionTable()
+                    commitButton.id = "something-else"
                 }
             }
         }
@@ -128,6 +131,8 @@ class PointRedeemOptionSettingPane(implicit context: CoreContext) extends Border
                             text = text.value.replaceAll("[^0-9]", "")
                             item.update(text.value.toInt)
                             optionTable.items.getValue.get(tableRow.value.getIndex).point = item.value
+                            isDirty = true
+                            commitButton.id = "blue-button"
                         }
                         onMouseClicked = new EventHandler[MouseEvent]
                         {

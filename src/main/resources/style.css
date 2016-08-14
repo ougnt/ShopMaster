@@ -17,6 +17,14 @@
     -fx-border-color: Black
 }
 
+#blue-button {
+    -fx-font: 16px "Serif";
+    -fx-padding: 10;
+    -fx-label-padding: 5, 5, 5, 5;
+    -fx-background-color: #86EDFF;
+    -fx-border-color: Black
+}
+
 #button-control-flow-pane {
     -fx-alignment: "center-right";
     -fx-padding: 10;

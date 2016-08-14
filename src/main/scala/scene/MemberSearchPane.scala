@@ -22,6 +22,8 @@ class MemberSearchPane(openMemberDetailCallback: (MemberRepository) => Unit)(imp
     stylesheets = List(getClass.getResource("/style.css").toExternalForm)
 
     var model = new MemberSearchModel(this)
+    var searchButton: Button = null
+
     id = "member-search-tab"
 
     center = generateMainPane
@@ -95,6 +97,17 @@ class MemberSearchPane(openMemberDetailCallback: (MemberRepository) => Unit)(imp
         {
             text = model.searchKeyword()
 
+            text.onChange
+            {
+                if(!text.value.equals(""))
+                {
+                    searchButton.id = "blue-button"
+                } else
+                {
+                    searchButton.id = "something-else"
+                }
+            }
+
             onAction = new EventHandler[ActionEvent]
             {
                 override def handle(event: ActionEvent): Unit =
@@ -111,7 +124,7 @@ class MemberSearchPane(openMemberDetailCallback: (MemberRepository) => Unit)(imp
             }
         }
 
-        val searchButton = new Button(model.searchButton)
+        searchButton = new Button(model.searchButtonText)
         {
             onAction = new EventHandler[ActionEvent]
             {
