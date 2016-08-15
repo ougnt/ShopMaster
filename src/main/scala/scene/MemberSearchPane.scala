@@ -108,6 +108,13 @@ class MemberSearchPane(openMemberDetailCallback: (MemberRepository) => Unit)(imp
                 }
             }
 
+            onMouseClicked = new EventHandler[MouseEvent] {
+                override def handle(event: MouseEvent): Unit =
+                {
+                    requestFocus()
+                }
+            }
+
             onAction = new EventHandler[ActionEvent]
             {
                 override def handle(event: ActionEvent): Unit =
