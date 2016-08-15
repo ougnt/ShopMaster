@@ -22,7 +22,6 @@ class PointRedeemOptionSettingPane(implicit context: CoreContext) extends Border
     id = "point-redeem-option-setting-pane"
     var dataModel = new PointRedeemOptionSettingModel()
     val optionTable = generateOptionTable()
-    var isDirty = false
     var commitButton: Button = null
     center = optionTable
     bottom = generateButtonFlowPane()
@@ -126,20 +125,44 @@ class PointRedeemOptionSettingPane(implicit context: CoreContext) extends Border
                     graphic = new TextField
                     {
                         text = newValue.toString.replaceAll("[^0-9]", "")
-                        text.onChange
-                        {
-                            text = text.value.replaceAll("[^0-9]", "")
-                            item.update(text.value.toInt)
-                            optionTable.items.getValue.get(tableRow.value.getIndex).point = item.value
-                            isDirty = true
-                            commitButton.id = "blue-button"
-                        }
+                        editable = false
+//                        text.onChange
+//                        {
+//                            text = text.value.replaceAll("[^0-9]", "")
+//                            item.update(text.value.toInt)
+//                            optionTable.items.getValue.get(tableRow.value.getIndex).point = item.value
+//                            commitButton.id = "blue-button"
+//                        }
+
                         onMouseClicked = new EventHandler[MouseEvent]
                         {
                             override def handle(event: MouseEvent): Unit =
                             {
                                 tableView.value.getSelectionModel.clearSelection()
                                 tableRow.value.updateSelected(true)
+                                try
+                                {
+                                    text = new TextInputDialog(defaultValue = text.value)
+                                    {
+                                        title = "Value editor"
+                                        contentText = "Please Enter the new value"
+                                    }.showAndWait().getOrElse(text.value).toInt.toString
+                                    item.update(text.value.toInt)
+                                    optionTable.items.getValue.get(tableRow.value.getIndex).point = item.value
+                                } catch
+                                {
+                                    case e: NumberFormatException =>
+                                    {
+                                        new Alert(Alert.AlertType.Error)
+                                        {
+                                            headerText = "Invalid input"
+                                            contentText = "Please enter only integer"
+                                        }.showAndWait()
+                                        return
+                                    }
+                                }
+
+                                commitButton.id = "blue-button"
                             }
                         }
                         onKeyPressed = new EventHandler[KeyEvent]
