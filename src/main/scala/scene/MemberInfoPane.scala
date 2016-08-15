@@ -208,6 +208,13 @@ class MemberInfoPane(displayMode: DisplayMode, openHistoryTabCallback: (MemberRe
     }
     textFieldContents ++= List(pointTextField)
 
+    // make buttons dirty
+    textFieldContents.foreach(_.text.onChange
+    {
+        saveButton.id = "blue-button"
+        editButton.id = "blue-button"
+    })
+
     //</editor-fold>
 
     //<editor-fold desc="button control">
@@ -229,6 +236,7 @@ class MemberInfoPane(displayMode: DisplayMode, openHistoryTabCallback: (MemberRe
                         headerText = "Registration Message"
                         contentText = "User Created"
                         clearData()
+                        id = "save-button"
                     }.showAndWait()
                 } catch
                 {
@@ -311,7 +319,7 @@ class MemberInfoPane(displayMode: DisplayMode, openHistoryTabCallback: (MemberRe
                 val options = new PointRedeemOptionRepository().get(Seq("rec_status" -> "1")).asInstanceOf[Seq[PointRedeemOptionRepository]].filter(
                     _.point <= dataModel.member.point).reverse
 
-                if(!options.isEmpty)
+                if (!options.isEmpty)
                 {
                     var optionsText: List[String] = List()
 
@@ -393,6 +401,7 @@ class MemberInfoPane(displayMode: DisplayMode, openHistoryTabCallback: (MemberRe
                         headerText = "Update successfully"
                         contentText = "The member details are updated"
                     }.showAndWait()
+                    id = "edit-button"
                 }
             }
         }
@@ -409,6 +418,8 @@ class MemberInfoPane(displayMode: DisplayMode, openHistoryTabCallback: (MemberRe
             override def handle(event: ActionEvent): Unit =
             {
                 clearData()
+                saveButton.id = "save-button"
+                editButton.id = "edit-button"
             }
         }
     }
@@ -520,6 +531,7 @@ class MemberInfoPane(displayMode: DisplayMode, openHistoryTabCallback: (MemberRe
     def clearData() =
     {
         textFieldContents.foreach(c => c.asInstanceOf[TextField].text = "")
+
     }
 
     def saveDataModel(): Unit =
