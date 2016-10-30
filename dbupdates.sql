@@ -142,3 +142,45 @@ VALUE
 CREATE OR REPLACE VIEW point_redeem_options_vu AS (SELECT * FROM point_redeem_options);
 
 SHOW ENGINE INNODB STATUS;
+
+-- -------------------------------------------
+-- version 5.0
+-- -------------------------------------------
+UPDATE db_info SET db_version = 5;
+
+DROP VIEW IF EXISTS point_redeem_options_vu;
+DROP TABLE IF EXISTS point_redeem_options;
+
+CREATE TABLE IF NOT EXISTS point_redeem_profile (
+	point_redeem_profile_id INT NOT NULL PRIMARY KEY AUTO_INCREMENT,
+	description NVARCHAR(200) DEFAULT '',
+	point_interval INT NOT NULL,
+	discount_per_interval INT NOT NULL,
+	minimum_redemption INT NOT NULL,
+	rec_created_by VARCHAR(36) NOT NULL,
+	rec_created_when VARCHAR(128) NOT NULL,
+	rec_modified_by VARCHAR(36),
+	rec_modified_when VARCHAR(128),
+	rec_status INT NOT NULL DEFAULT 1,
+	FOREIGN KEY (rec_status) REFERENCES rec_status_ref (rec_status_id),
+	FOREIGN KEY (rec_created_by) REFERENCES users(user_id),
+	FOREIGN KEY (rec_modified_by) REFERENCES users(user_id)
+);
+
+CREATE OR REPLACE VIEW point_redeem_profile_vu AS (SELECT * FROM point_redeem_profile);
+
+INSERT INTO point_redeem_profile VALUES (
+	1,
+	'Initial setting',
+	100,
+	10,
+	1000,
+	(SELECT user_id from users LIMIT 1),
+	'2016-10-29',
+	NULL,
+	NULL,
+	1
+);
+
+SHOW ENGINE INNODB STATUS;
+
