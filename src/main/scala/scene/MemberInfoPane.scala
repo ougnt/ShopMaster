@@ -189,7 +189,7 @@ class MemberInfoPane(displayMode: DisplayMode, openHistoryTabCallback: (MemberRe
     }
     textFieldContents ++= List(birthTextField)
 
-    val addressTextField = new TextField()
+    val addressTextField = new TextArea()
     {
         id = "address-text-field"
         text = dataModel.address()
@@ -198,7 +198,7 @@ class MemberInfoPane(displayMode: DisplayMode, openHistoryTabCallback: (MemberRe
             dataModel.address.update(text.apply())
         }
     }
-    textFieldContents ++= List(addressTextField)
+//    textFieldContents ++= List(addressTextField)
 
     val pointTextField = new TextField()
     {
@@ -209,6 +209,10 @@ class MemberInfoPane(displayMode: DisplayMode, openHistoryTabCallback: (MemberRe
     textFieldContents ++= List(pointTextField)
 
     // make buttons dirty
+    addressTextField.text.onChange {
+        saveButton.id = "blue_button"
+        editButton.id = "blue_button"
+    }
     textFieldContents.foreach(_.text.onChange
     {
         saveButton.id = "blue-button"
@@ -530,8 +534,8 @@ class MemberInfoPane(displayMode: DisplayMode, openHistoryTabCallback: (MemberRe
 
     def clearData() =
     {
-        textFieldContents.foreach(c => c.asInstanceOf[TextField].text = "")
-
+        textFieldContents.foreach(c => c.text = "")
+        addressTextField.text = ""
     }
 
     def saveDataModel(): Unit =
