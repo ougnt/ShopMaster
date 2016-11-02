@@ -1,183 +1,119 @@
 package scene
 
-import javafx.event.{ActionEvent, EventHandler}
-import javafx.scene.input.{KeyEvent, MouseEvent}
+import javafx.scene.layout.ColumnConstraints
 
 import context.CoreContext
 import model.PointRedeemOptionSettingModel
-import repository.PointRedeemOptionRepository
 
 import scala.concurrent.ExecutionContext.Implicits.global
 import scala.concurrent.Future
-import scalafx.beans.property.ObjectProperty
-import scalafx.collections.ObservableBuffer
 import scalafx.scene.control._
-import scalafx.scene.layout.{BorderPane, FlowPane}
+import scalafx.scene.layout.{BorderPane, FlowPane, GridPane}
 
 /**
   * * # Created by wacharint on 8/11/2016 AD.
   **/
-class PointRedeemOptionSettingPane(implicit context: CoreContext) extends BorderPane
-{
+class PointRedeemOptionSettingPane(implicit context: CoreContext) extends BorderPane {
     id = "point-redeem-option-setting-pane"
     var dataModel = new PointRedeemOptionSettingModel()
-    val optionTable = generateOptionTable()
     var commitButton: Button = null
-    center = optionTable
+    center = generateRedemptionProfile()
+
     bottom = generateButtonFlowPane()
 
     // <editor-fold desc="def">
 
-    def generateOptionTable(): TableView[PointRedeemOptionRepository] =
-    {
-        val settings = ObservableBuffer(dataModel.currentSettings)
+    def generateRedemptionProfile(): GridPane = {
 
-        val pointCol = new TableColumn[PointRedeemOptionRepository, Int](dataModel.pointColumnText)
-        {
-            cellValueFactory = cdf => ObjectProperty(cdf.value.point)
-            cellFactory = _ => generateTextFieldTableCell()
-        }
-        val discountCol = new TableColumn[PointRedeemOptionRepository, Int](dataModel.discountColumnText)
-        {
-            cellValueFactory = cdf => ObjectProperty(cdf.value.discount)
-            cellFactory = _ => generateTextFieldTableCell()
+        val intervalLabel = new Label(){
+            text = dataModel.redemptionIntervalText
         }
 
-        val table = new TableView[PointRedeemOptionRepository](settings)
-        {
-
+        val discountPerIntervalLabel = new Label() {
+            text = dataModel.discountPerIntervalText
         }
-        table.editable = true
 
-        Future
-        {
-            while (table.width.value == 0)
-            {
+        val minimumRedemptionLabel = new Label() {
+            text = dataModel.minimumRedemptionText
+        }
+
+        var labels = List(intervalLabel, discountPerIntervalLabel, minimumRedemptionLabel)
+
+        val intervalTextField = new TextField() {
+            text = dataModel.redemptionInterval() toString()
+            text.onChange {
+                text = text.value.replaceAll("[^\\d]", "")
+                dataModel.redemptionInterval.update(text.value.toInt)
+            }
+        }
+        val minimumRedemptionTextField = new TextField() {
+            text = dataModel.minimumRedemption() toString()
+            text.onChange {
+                text = text.value.replaceAll("[^\\d]", "")
+                dataModel.minimumRedemption.update(text.value.toInt)
+            }
+        }
+        val discountPerIntervalTextField = new TextField() {
+            text = dataModel.discountPerInterval() toString()
+            text.onChange {
+                text = text.value.replaceAll("[^\\d]", "")
+                dataModel.discountPerInterval.update(text.value.toInt)
+            }
+        }
+
+        val textFields = List(intervalTextField, discountPerIntervalTextField, minimumRedemptionTextField)
+
+        val intervalPane = new FlowPane()
+        intervalPane.children = List(intervalLabel, intervalTextField)
+
+        val discountPane = new FlowPane()
+        discountPane.children = List(discountPerIntervalLabel, discountPerIntervalTextField)
+
+        val minimumRedemptionPane = new FlowPane()
+        minimumRedemptionPane.children = List(minimumRedemptionLabel, minimumRedemptionTextField)
+
+        val pane = new GridPane()
+
+        val col1 = new ColumnConstraints()
+        col1.setPercentWidth(100)
+        pane.columnConstraints.add(col1)
+        pane.addRow(0, intervalPane)
+        pane.addRow(1, discountPane)
+        pane.addRow(2, minimumRedemptionPane)
+
+        var maxLengthLabel = 0d
+
+        Future {
+            while(labels(0).width.value == 0) {
                 Thread.sleep(10)
             }
-            pointCol.prefWidth = table.width.value * 0.499
-            discountCol.prefWidth = table.width.value * 0.499
-            table.columns ++= List(pointCol, discountCol)
-        }
-
-        table
-    }
-
-    def generateButtonFlowPane(): FlowPane =
-    {
-        commitButton = new Button()
-        {
-            text = dataModel.commitButtonText
-            onAction = new EventHandler[ActionEvent] {
-                override def handle(event: ActionEvent): Unit =
-                {
-                    commitTableInfo()
-                    commitButton.id = "something-else"
-                }
-            }
-        }
-
-        val reverseButton = new Button()
-        {
-            text = dataModel.reverseButtonText
-            onAction = new EventHandler[ActionEvent] {
-                override def handle(event: ActionEvent): Unit =
-                {
-                    dataModel = new PointRedeemOptionSettingModel()
-                    center = generateOptionTable()
-                    commitButton.id = "something-else"
-                }
-            }
-        }
-
-        val pane = new FlowPane
-        {
-            id = "point-redeem-option-setting-model-flow-pane"
-            children = List(commitButton, reverseButton)
+            labels.foreach(l =>
+                maxLengthLabel = if(l.width.apply() > maxLengthLabel)
+                    l.width.value
+                else
+                    maxLengthLabel
+            )
+            intervalPane.hgap = maxLengthLabel + 10 - intervalPane.children.get(0).asInstanceOf[javafx.scene.control.Label].getWidth
+            discountPane.hgap = maxLengthLabel + 10 - discountPane.children.get(0).asInstanceOf[javafx.scene.control.Label].getWidth
+            minimumRedemptionPane.hgap = maxLengthLabel + 10 - minimumRedemptionPane.children.get(0).asInstanceOf[javafx.scene.control.Label].getWidth
         }
 
         pane
     }
 
-    def commitTableInfo(): Unit =
-    {
-        var newSettings: Seq[PointRedeemOptionRepository] = Nil
-        for (i <- 0 until optionTable.items.getValue.size())
-        {
-            newSettings = newSettings ++ Seq(optionTable.items.getValue.get(i))
-        }
-        dataModel.newSettings = newSettings
-        dataModel.newSettings.foreach(s =>
-        {
-            s.update(Seq("redeem_option_id"))
-        })
-    }
+    def generateButtonFlowPane(): FlowPane = {
 
-    def generateTextFieldTableCell(): TableCell[PointRedeemOptionRepository, Int] =
-    {
-        new TableCell[PointRedeemOptionRepository, Int]
-        {
-            item.onChange
-            {
-                (obj, oldValue, newValue) =>
-                {
-                    val copiedNewValue = newValue
-                    graphic = new TextField
-                    {
-                        text = newValue.toString.replaceAll("[^0-9]", "")
-                        editable = false
-//                        text.onChange
-//                        {
-//                            text = text.value.replaceAll("[^0-9]", "")
-//                            item.update(text.value.toInt)
-//                            optionTable.items.getValue.get(tableRow.value.getIndex).point = item.value
-//                            commitButton.id = "blue-button"
-//                        }
-
-                        onMouseClicked = new EventHandler[MouseEvent]
-                        {
-                            override def handle(event: MouseEvent): Unit =
-                            {
-                                tableView.value.getSelectionModel.clearSelection()
-                                tableRow.value.updateSelected(true)
-                                try
-                                {
-                                    text = new TextInputDialog(defaultValue = text.value)
-                                    {
-                                        title = "Value editor"
-                                        contentText = "Please Enter the new value"
-                                    }.showAndWait().getOrElse(text.value).toInt.toString
-                                    item.update(text.value.toInt)
-                                    optionTable.items.getValue.get(tableRow.value.getIndex).point = item.value
-                                } catch
-                                {
-                                    case e: NumberFormatException =>
-                                    {
-                                        new Alert(Alert.AlertType.Error)
-                                        {
-                                            headerText = "Invalid input"
-                                            contentText = "Please enter only integer"
-                                        }.showAndWait()
-                                        return
-                                    }
-                                }
-
-                                commitButton.id = "blue-button"
-                            }
-                        }
-                        onKeyPressed = new EventHandler[KeyEvent]
-                        {
-                            override def handle(event: KeyEvent): Unit =
-                            {
-                                tableView.value.getSelectionModel.clearSelection()
-                                tableRow.value.updateSelected(true)
-                            }
-                        }
-                    }
-
-                }
+        val commitButton = new Button() {
+            text = dataModel.commitButtonText
+            onAction = {
+                dataModel.commit()
             }
         }
+
+        val pane = new FlowPane()
+        pane.id = "button-control-flow-pane"
+        pane.children = List(commitButton)
+        pane
     }
 
     // </editor-fold>
