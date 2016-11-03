@@ -17,7 +17,7 @@ import scala.concurrent.{ExecutionContext, Future}
 import scala.math.Ordering.IntOrdering
 import scalafx.scene.control.Alert.AlertType
 import scalafx.scene.control._
-import scalafx.scene.layout.{BorderPane, FlowPane, GridPane}
+import scalafx.scene.layout.{ColumnConstraints, BorderPane, FlowPane, GridPane}
 
 /**
   * * # Created by wacharint on 7/25/2016 AD.
@@ -270,12 +270,15 @@ class MemberInfoPane(displayMode: DisplayMode, openHistoryTabCallback: (MemberRe
             override def handle(event: ActionEvent): Unit = {
                 val pointProfile = new PointRedeemProfileRepository().get(Seq("point_redeem_profile_id" -> "1")).head.asInstanceOf[PointRedeemProfileRepository]
 
-                // TODO : Show point information
                 if (pointProfile != null) {
 
                     val dialog = new TextInputDialog(defaultValue = "0") {
                         headerText = "Points redemption"
-                        contentText = "Please enter redemption points"
+                        contentText =
+                            "Please enter redemption points\n%s points for %s THB.\nThe minimum redemption is %s".format(
+                                pointProfile.pointInterval,
+                                pointProfile.discountPerInterval,
+                                pointProfile.minimumRedemption)
                     }
 
                     val res = dialog.showAndWait()
@@ -283,7 +286,7 @@ class MemberInfoPane(displayMode: DisplayMode, openHistoryTabCallback: (MemberRe
 
                         try {
                             val redeemingPoint = res.get.toInt - (res.get.toInt % pointProfile.pointInterval)
-                            if(redeemingPoint > pointTextField.text.value.toInt) {
+                            if (redeemingPoint > pointTextField.text.value.toInt) {
                                 new Alert(AlertType.Warning) {
                                     title = "Warning"
                                     headerText = "Point redeeming warning"
@@ -291,7 +294,7 @@ class MemberInfoPane(displayMode: DisplayMode, openHistoryTabCallback: (MemberRe
                                 }.showAndWait()
                                 return
                             }
-                            if(redeemingPoint < pointProfile.minimumRedemption) {
+                            if (redeemingPoint < pointProfile.minimumRedemption) {
                                 new Alert(AlertType.Warning) {
                                     headerText = "Warning"
                                     contentText = "Minimum Redemption is %s".format(pointProfile.minimumRedemption)
@@ -426,18 +429,20 @@ class MemberInfoPane(displayMode: DisplayMode, openHistoryTabCallback: (MemberRe
         birthFlowPane,
         pointFlowPane)
 
-    gridPane.add(firstNameFlowPane, 1, 1)
-    gridPane.add(lastNameFlowPane, 1, 2)
-    gridPane.add(sexFlowPane, 1, 3)
-    gridPane.add(addressFlowPane, 1, 4)
+    gridPane.add(firstNameFlowPane, 0, 1)
+    gridPane.add(lastNameFlowPane, 0, 2)
+    gridPane.add(sexFlowPane, 0, 3)
+    gridPane.add(addressFlowPane, 0, 4)
 
-    gridPane.add(idFlowPane, 2, 1)
-    gridPane.add(telFlowPane, 2, 2)
-    gridPane.add(birthFlowPane, 2, 3)
+    gridPane.add(idFlowPane, 1, 1)
+    gridPane.add(telFlowPane, 1, 2)
+    gridPane.add(birthFlowPane, 1, 3)
 
     if (displayMode == DisplayMode.Edit) {
-        gridPane.add(pointFlowPane, 2, 4)
+        gridPane.add(pointFlowPane, 1, 4)
     }
+
+    gridPane.autosize()
 
     center = gridPane
     bottom = buttonFlowPane
@@ -449,12 +454,21 @@ class MemberInfoPane(displayMode: DisplayMode, openHistoryTabCallback: (MemberRe
         }
         implicit val order = new IntOrdering {}
 
-        addressTextArea.maxWidth = firstNameTextField.width.apply()
         val longestWidth: Double = labelContents.maxBy(l => l.width.apply()).width.apply()
 
         flowPanes.foreach(f => {
             f.hgap = longestWidth + 5 - f.children.get(0).asInstanceOf[javafx.scene.control.Label].getWidth
         })
+        addressFlowPane.prefWidth = firstNameFlowPane.width.value
+        val col1 = new ColumnConstraints()
+        col1.prefWidth = addressFlowPane.width.value
+        gridPane.columnConstraints = List(col1, col1)
+        gridPane.autosize()
+
+        textFieldContents.foreach(t => {
+            t.prefWidth = (gridPane.width.value / 4) - longestWidth - 10
+        })
+        addressTextArea.prefWidth = (gridPane.width.value / 4) - longestWidth - 10
     }
 
     //</editor-fold>

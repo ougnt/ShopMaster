@@ -9,6 +9,17 @@
     -fx-border-color: Black;
 }
 
+.text-area {
+    -fx-font: 16px "Serif";
+    -fx-padding: 0;
+    -fx-background-color: #E9E9E9;
+    -fx-border-color: Black;
+}
+
+.text-area .content {
+    -fx-background-color: #E9E9E9;
+}
+
 .button {
     -fx-font: 16px "Serif";
     -fx-padding: 10;
